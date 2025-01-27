@@ -4,7 +4,8 @@ from aiogram import BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from app.exceptions.openai import PermissionOIException, NotFoundOIException, BadRequestOIException
+from app.exceptions.openai import PermissionOIException, NotFoundOIException, BadRequestOIException, \
+    RateLimitImageOIException
 from app.inlines.actions import get_initial_keyboard
 
 
@@ -19,7 +20,12 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
 
         try:
             await handler(event, data)
-        except (PermissionOIException, NotFoundOIException, BadRequestOIException) as error:
+        except (
+            PermissionOIException,
+            NotFoundOIException,
+            BadRequestOIException,
+            RateLimitImageOIException,
+        ) as error:
             await self._handle_exception(event, error, state)
 
 
@@ -33,12 +39,12 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API или используй VPN',
             NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
             BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
+            RateLimitImageOIException: '⚠️ Слишком много запросов для генерации изображений',
         }
 
         error_message = error_messages.get(type(exception), '⚠️ Что-то пошло не так(')
         await event.answer(error_message)
         await self.return_to_main_menu(event, state)
-
 
 
     @staticmethod

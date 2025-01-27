@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import Router, F, flags
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
@@ -43,6 +43,7 @@ async def handle_new_question(callback: CallbackQuery, state: FSMContext):
 
 
 @action_router.message(StateFilter(WaitingState.waiting_for_question))
+@flags.chat_action('typing')
 async def handle_question_input(
     message: Message,
     state: FSMContext,

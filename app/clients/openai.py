@@ -41,10 +41,11 @@ class OpenAIClient:
         if len(conversation_history) > self.max_history_length:
             conversation_history = conversation_history[-self.max_history_length:]
 
-        response = await self.client.chat.completions.create(
-            model=self.model,
-            messages=conversation_history,
-        )
+        async with self.semaphore:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=conversation_history,
+            )
 
         assistant_reply = response.choices[0].message.content
         conversation_history.append({
@@ -63,6 +64,9 @@ class OpenAIClient:
                 prompt=description,
                 n=image_count,
                 size='1024x1024',
+                model='dall-e-2',
+                quality='standard',
+                response_format='url',
             )
         return response.data[0].url
 
