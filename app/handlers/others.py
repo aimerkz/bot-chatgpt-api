@@ -10,19 +10,19 @@ other_router = Router(name=__name__)
 
 @other_router.message(StateFilter(WaitingState.waiting_for_button))
 async def handle_unexpected_text(message: Message):
-	"""Обработчик попытки ввода текста до нажатия на кнопку"""
+    """Обработчик попытки ввода текста до нажатия на кнопку"""
 
-	await message.answer(
-		text='Пожалуйста, выбери действие с помощью кнопок 👇',
-		reply_markup=get_continue_keyboard(),
-	)
+    await message.answer(
+        text='Пожалуйста, выбери действие с помощью кнопок 👇',
+        reply_markup=get_continue_keyboard(),
+    )
 
 
 @other_router.message(StateFilter(None))
 async def handle_unexpected_message(message: Message):
-	"""Обработчик ввода текста в других состояниях или без состояния"""
+    """Обработчик ввода текста в других состояниях или без состояния"""
 
-	await message.answer(
-		text='Пожалуйста, выбери действие с помощью кнопок 👇',
-		reply_markup=get_initial_keyboard(),
-	)
+    await message.answer(
+        text='Пожалуйста, выбери действие с помощью кнопок 👇',
+        reply_markup=get_initial_keyboard(),
+    )

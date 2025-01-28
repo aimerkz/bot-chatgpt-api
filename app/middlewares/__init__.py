@@ -11,14 +11,14 @@ from app.middlewares.throttling import ThrottlingMiddleware
 
 
 def setup_middlewares(dp: Dispatcher) -> Dispatcher:
-	logger = logging.getLogger('aiogram')
+    logger = logging.getLogger('aiogram')
 
-	dp.message.middleware(
-		OpenAIMiddleware(config.api_key.get_secret_value()),
-	)
-	dp.message.middleware(LoggingMiddleware(logger))
-	dp.message.middleware(OpenAIExceptionMiddleware())
-	dp.message.middleware(ThrottlingMiddleware())
-	dp.message.middleware(ChatActionMiddleware())
+    dp.message.middleware(
+        OpenAIMiddleware(config.api_key.get_secret_value()),
+    )
+    dp.message.middleware(LoggingMiddleware(logger))
+    dp.message.middleware(OpenAIExceptionMiddleware())
+    dp.message.middleware(ThrottlingMiddleware())
+    dp.message.middleware(ChatActionMiddleware())
 
-	return dp
+    return dp
