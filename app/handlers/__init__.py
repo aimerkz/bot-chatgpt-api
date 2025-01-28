@@ -6,9 +6,9 @@ from app.handlers.others import other_router
 
 
 def setup_routers(dp: Dispatcher) -> Dispatcher:
-	dp.include_routers(
-		action_router,
-		other_router,
-		setup_image_routers(),
-	)
-	return dp
+    dp.include_routers(
+        action_router,
+        other_router,
+        setup_image_routers(),
+    )
+    return dp

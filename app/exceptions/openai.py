@@ -2,16 +2,16 @@ from app.exceptions.base import BaseInternalException
 
 
 class PermissionOIException(BaseInternalException):
-	pass
+    pass
 
 
 class BadRequestOIException(BaseInternalException):
-	pass
+    pass
 
 
 class NotFoundOIException(BaseInternalException):
-	pass
+    pass
 
 
 class RateLimitImageOIException(BaseInternalException):
-	pass
+    pass
