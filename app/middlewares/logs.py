@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
@@ -7,6 +8,7 @@ from aiogram.types import Message
 
 class LoggingMiddleware(BaseMiddleware):
 	max_length_text: int = 50
+	logs_path: str = 'logs/logs.txt'
 
 	def __init__(
 		self,
@@ -15,7 +17,9 @@ class LoggingMiddleware(BaseMiddleware):
 		self.logger = logger or logging.getLogger(__name__)
 		self.logger.setLevel(logging.INFO)
 
-		handler = logging.StreamHandler()
+		os.makedirs(os.path.dirname(self.logs_path), exist_ok=True)
+
+		handler = logging.FileHandler(self.logs_path)
 		handler.setFormatter(
 			logging.Formatter(
 				fmt='[%(asctime)s] [%(name)s] [%(levelname)s] > [%(message)s]',

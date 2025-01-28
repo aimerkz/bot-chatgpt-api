@@ -79,4 +79,4 @@ env/
 dmypy.json
 
 # logs
-bot_logs.txt
+logs/
