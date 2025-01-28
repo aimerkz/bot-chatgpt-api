@@ -51,14 +51,14 @@ async def handle_question_input(
 ):
 	"""Обработчик события получения нового вопроса"""
 
-	question = message.text
 	await message.answer('Отправил твой вопрос, ждем ответ ⌛')
 
-	answer = await openai_client.ask(question, state)
+	answer = await openai_client.ask(message.text, state)
 	await state.update_data(last_response=answer)
 
 	await message.reply(answer)
 	await state.set_state(WaitingState.waiting_for_button)
+
 	await message.answer(
 		text='Что будем делать дальше?',
 		reply_markup=get_continue_keyboard(),

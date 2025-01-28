@@ -33,10 +33,10 @@ def get_continue_keyboard() -> InlineKeyboardMarkup:
 		inline_keyboard=[
 			[
 				InlineKeyboardButton(
-					text='Задать новый вопрос', callback_data=ActionsEnum.NEW_QUESTION
+					text='Новый вопрос', callback_data=ActionsEnum.NEW_QUESTION
 				),
 				InlineKeyboardButton(
-					text='Продолжить общение', callback_data=ActionsEnum.ASK_AGAIN
+					text='Продолжить', callback_data=ActionsEnum.ASK_AGAIN
 				),
 				InlineKeyboardButton(text='Выйти', callback_data=ActionsEnum.EXIT),
 			]
@@ -44,7 +44,7 @@ def get_continue_keyboard() -> InlineKeyboardMarkup:
 	)
 
 
-def get_continue_keyboard_for_images() -> InlineKeyboardMarkup:
+def get_keyboard_after_get_images() -> InlineKeyboardMarkup:
 	return InlineKeyboardMarkup(
 		inline_keyboard=[
 			[

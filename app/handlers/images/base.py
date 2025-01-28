@@ -11,6 +11,8 @@ image_router = Router(name=__name__)
 
 @image_router.callback_query(F.data == ActionsEnum.GENERATE_IMAGE)
 async def handle_generate_image(callback: CallbackQuery, state: FSMContext):
+	"""Обработчик ввода числа генерируемых картинок"""
+
 	await callback.message.edit_text(
 		text='Сколько картинок хочешь сгенерировать? (Число от 1 до 3)',
 	)
@@ -19,6 +21,8 @@ async def handle_generate_image(callback: CallbackQuery, state: FSMContext):
 
 @image_router.message(StateFilter(WaitingState.waiting_for_image_count))
 async def handle_image_count(message: Message, state: FSMContext):
+	"""Обработчик ввода описания генерируемых картинок"""
+
 	try:
 		count = int(message.text)
 		if 1 <= count <= 3:
