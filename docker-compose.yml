@@ -1,0 +1,17 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'bot'
+    ports:
+      - '8055:8055'
+    restart: unless-stopped
+    networks:
+      - bot-network
+    volumes:
+      - ./logs:/src/logs/
+
+networks:
+  bot-network:
+    driver: bridge
