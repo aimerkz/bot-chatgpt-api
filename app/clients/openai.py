@@ -1,7 +1,7 @@
 from asyncio import Semaphore
+from typing import TYPE_CHECKING
 
 import openai
-from aiogram.fsm.context import FSMContext
 from openai import AsyncOpenAI
 
 from app.exceptions.openai import (
@@ -10,6 +10,9 @@ from app.exceptions.openai import (
 	PermissionOIException,
 	RateLimitImageOIException,
 )
+
+if TYPE_CHECKING:
+	from aiogram.fsm.context import FSMContext
 
 
 class OpenAIClient:
@@ -25,24 +28,18 @@ class OpenAIClient:
 	async def ask(
 		self,
 		user_text: str,
-		state: FSMContext,
+		state: 'FSMContext',
 	) -> str:
 		return await self._handle_openai_error(self._ask, user_text, state)
 
 	async def _ask(
 		self,
 		user_text: str,
-		state: FSMContext,
+		state: 'FSMContext',
 	) -> str:
 		conversation_history = await state.get_data()
 		conversation_history = conversation_history.get('history', [])
-
-		conversation_history.append(
-			{
-				'role': 'user',
-				'content': user_text,
-			}
-		)
+		conversation_history.append(self._make_content(role='user', user_text=user_text))
 
 		if len(conversation_history) > self.max_history_length:
 			conversation_history = conversation_history[-self.max_history_length :]
@@ -55,11 +52,9 @@ class OpenAIClient:
 
 		assistant_reply = response.choices[0].message.content
 		conversation_history.append(
-			{
-				'role': 'assistant',
-				'content': assistant_reply,
-			}
+			self._make_content(role='assistant', user_text=assistant_reply)
 		)
+
 		await state.update_data(history=conversation_history)
 		return assistant_reply
 
@@ -92,3 +87,10 @@ class OpenAIClient:
 			raise BadRequestOIException(error.message, error.status_code)
 		except openai.RateLimitError as error:
 			raise RateLimitImageOIException(error.message, error.status_code)
+
+	@staticmethod
+	def _make_content(role: str, user_text: str) -> dict[str, str]:
+		return {
+			'role': role,
+			'content': user_text,
+		}

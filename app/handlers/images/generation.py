@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import InputMediaPhoto, Message
 
 from app.clients.openai import OpenAIClient
-from app.inlines.actions import get_base_keyboard, get_continue_keyboard_for_images
+from app.inlines.actions import get_base_keyboard, get_keyboard_after_get_images
 from app.states.waiting import WaitingState
 from app.utils.images import generate_images
 
@@ -56,5 +56,5 @@ async def send_generated_image(
 	await state.set_state(WaitingState.waiting_for_button)
 	await message.answer(
 		text='Что делаем дальше?',
-		reply_markup=get_continue_keyboard_for_images(),
+		reply_markup=get_keyboard_after_get_images(),
 	)
