@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd home/bot
+            cd /home/bot
 
             if [ ! -d ".git" ]; then
               git clone https://github.com/aimerkz/bot-chatgpt-api.git
