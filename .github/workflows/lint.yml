@@ -1,0 +1,29 @@
+name: Lint code with ruff
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  lint:
+    name: Run ruff linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff formatter
+        run: ruff format --check --diff --config pyproject.toml
+
+      - name: Run ruff linter with fix
+        run: ruff check --diff --config pyproject.toml
