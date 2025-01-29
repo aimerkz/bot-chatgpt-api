@@ -4,10 +4,10 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import LinkPreviewOptions
 
-from app.config_reader import config
-from app.handlers import setup_routers
-from app.middlewares import setup_middlewares
-from app.utils.set_commands import set_default_commands
+from config_reader import config
+from handlers import setup_routers
+from middlewares import setup_middlewares
+from utils.set_commands import set_default_commands
 
 
 async def main():

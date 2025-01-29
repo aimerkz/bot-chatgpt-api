@@ -1,0 +1,37 @@
+name: Deploy bot to server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy process telegram bot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd home/bot
+
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/aimerkz/bot-chatgpt-api.git .
+            else
+              git pull origin master
+            fi
+            
+            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" > /bot-chatgpt-api/app/.env
+            echo "API_KEY=${{ secrets.API_KEY }}" >> /bot-chatgpt-api/app/.env
+
+            docker compose down --rmi all -v
+            docker compose up -d --build
