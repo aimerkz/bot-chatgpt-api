@@ -24,10 +24,10 @@ jobs:
           script: |
             cd /home/bot
 
-            if [ ! -d ".git" ]; then
+            if [ ! -d "bot-chatgpt-api/.git" ]; then
               git clone https://github.com/aimerkz/bot-chatgpt-api.git
             else
-              git pull origin master
+              cd bot-chatgpt-api/ && git pull origin master
             fi
             
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" > bot-chatgpt-api/app/.env
