@@ -21,6 +21,20 @@ async def handle_start_command(message: Message):
     )
 
 
+@action_router.message(Command('help'))
+async def cmd_help(message: Message):
+    help_text = (
+        '<b>Доступные действия:</b>\n\n'
+        '<b>1. Задать вопрос</b> — чтобы задать новый вопрос боту\n'
+        '<b>2. Выйти</b> — чтобы выйти из текущего диалога\n'
+        '<b>3. Получить фото</b> — сгенерировать фото по запросу\n'
+        '<b>4. Новый вопрос</b> — чтобы задать новый вопрос\n'
+        '<b>5. Продолжить</b> — продолжить текущий диалог\n\n'
+        'Активируй бота командной /start, чтобы продолжить!'
+    )
+    await message.answer(help_text)
+
+
 @action_router.callback_query(F.data == ActionsEnum.ASK)
 async def handle_ask_question(callback: CallbackQuery, state: FSMContext):
     """Обработчик события по кнопке 'Задать вопрос'"""
