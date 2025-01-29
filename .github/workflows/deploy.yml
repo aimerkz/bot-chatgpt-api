@@ -30,8 +30,8 @@ jobs:
               git pull origin master
             fi
             
-            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" > /bot-chatgpt-api/app/.env
-            echo "API_KEY=${{ secrets.API_KEY }}" >> /bot-chatgpt-api/app/.env
+            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" > bot-chatgpt-api/app/.env
+            echo "API_KEY=${{ secrets.API_KEY }}" >> bot-chatgpt-api/app/.env
 
             docker compose down --rmi all -v
             docker compose up -d --build
