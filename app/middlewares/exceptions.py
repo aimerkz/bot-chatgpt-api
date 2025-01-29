@@ -9,6 +9,7 @@ from app.exceptions.openai import (
     NotFoundOIException,
     PermissionOIException,
     RateLimitImageOIException,
+    ServerOIException,
 )
 from app.inlines.actions import get_initial_keyboard
 
@@ -29,6 +30,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             NotFoundOIException,
             BadRequestOIException,
             RateLimitImageOIException,
+            ServerOIException,
         ) as error:
             await self._handle_exception(event, error, state)
 
@@ -42,10 +44,11 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API или используй VPN',
             NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
             BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
-            RateLimitImageOIException: '⚠️ Слишком много запросов для генерации изображений',
+            RateLimitImageOIException: '😱 Слишком много запросов для генерации изображений',
+            ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
         }
 
-        error_message = error_messages.get(type(exception), '⚠️ Что-то пошло не так(')
+        error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')
         await event.answer(error_message)
         await self.return_to_main_menu(event, state)
 

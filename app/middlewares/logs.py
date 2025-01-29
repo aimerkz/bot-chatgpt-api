@@ -23,7 +23,7 @@ class LoggingMiddleware(BaseMiddleware):
         os.makedirs(log_dir, exist_ok=True)
         log_file_path = os.path.join(log_dir, 'logs.txt')
 
-        handler =  logging.FileHandler(log_file_path)
+        handler = logging.FileHandler(log_file_path)
         handler.setFormatter(
             logging.Formatter(
                 fmt='[%(asctime)s] [%(name)s] [%(levelname)s] > [%(message)s]',
