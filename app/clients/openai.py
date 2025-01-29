@@ -9,6 +9,7 @@ from app.exceptions.openai import (
     NotFoundOIException,
     PermissionOIException,
     RateLimitImageOIException,
+    ServerOIException,
 )
 
 if TYPE_CHECKING:
@@ -87,6 +88,8 @@ class OpenAIClient:
             raise BadRequestOIException(error.message, error.status_code)
         except openai.RateLimitError as error:
             raise RateLimitImageOIException(error.message, error.status_code)
+        except openai.InternalServerError as error:
+            raise ServerOIException(error.message, error.status_code)
 
     @staticmethod
     def _make_content(role: str, user_text: str) -> dict[str, str]:

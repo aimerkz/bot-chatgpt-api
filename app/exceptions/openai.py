@@ -15,3 +15,7 @@ class NotFoundOIException(BaseInternalException):
 
 class RateLimitImageOIException(BaseInternalException):
     pass
+
+
+class ServerOIException(BaseInternalException):
+    pass
