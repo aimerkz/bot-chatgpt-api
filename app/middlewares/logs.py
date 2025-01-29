@@ -1,14 +1,15 @@
+import datetime
 import logging
+import os
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
-from aiogram.enums import ContentType
 from aiogram.types import Message
 
 
 class LoggingMiddleware(BaseMiddleware):
     max_length_text: int = 50
-    logs_path: str = 'logs/logs.txt'
+    logs_path: str = 'logs'
 
     def __init__(
         self,
@@ -17,9 +18,12 @@ class LoggingMiddleware(BaseMiddleware):
         self.logger = logger or logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
-        # os.makedirs(os.path.dirname(self.logs_path), exist_ok=True)
+        current_date = datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d')
+        log_dir = os.path.join(self.logs_path, current_date)
+        os.makedirs(log_dir, exist_ok=True)
+        log_file_path = os.path.join(log_dir, 'logs.txt')
 
-        handler = logging.StreamHandler()
+        handler =  logging.FileHandler(log_file_path)
         handler.setFormatter(
             logging.Formatter(
                 fmt='[%(asctime)s] [%(name)s] [%(levelname)s] > [%(message)s]',
@@ -34,16 +38,12 @@ class LoggingMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any],
     ):
-        match event.content_type:
-            case ContentType.VOICE:
-                return await handler(event, data)
-            case _:
-                text_message = (
-                    event.text
-                    if len(event.text) < self.max_length_text
-                    else event.text[: self.max_length_text]
-                )
-                self.logger.info(
-                    f'Получено сообщение от {event.from_user.full_name}: {text_message}'
-                )
-                return await handler(event, data)
+        text_message = (
+            event.text
+            if len(event.text) < self.max_length_text
+            else event.text[: self.max_length_text]
+        )
+        self.logger.info(
+            f'Получено сообщение от {event.from_user.full_name}: {text_message}'
+        )
+        return await handler(event, data)
