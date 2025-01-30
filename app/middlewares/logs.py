@@ -18,7 +18,7 @@ class LoggingMiddleware(BaseMiddleware):
         self.logger = logger or logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
-        current_date = datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d')
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
         log_dir = os.path.join(self.logs_path, current_date)
         os.makedirs(log_dir, exist_ok=True)
         log_file_path = os.path.join(log_dir, 'logs.txt')

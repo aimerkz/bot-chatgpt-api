@@ -4,10 +4,15 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import LinkPreviewOptions
 
+from app.utils.logs import cleanup_logs
 from config_reader import config
 from handlers import setup_routers
 from middlewares import setup_middlewares
 from utils.set_commands import set_default_commands
+
+
+async def on_startup():
+    asyncio.create_task(cleanup_logs())
 
 
 async def main():
@@ -28,6 +33,7 @@ async def main():
 
     await set_default_commands(bot)
     await bot.delete_webhook(drop_pending_updates=True)
+    await on_startup()
     await dp.start_polling(bot)
 
 
