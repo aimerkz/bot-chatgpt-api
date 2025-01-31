@@ -3,15 +3,12 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import LinkPreviewOptions
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from app.utils.scheduler import start_scheduler
+from app.utils.scheduler import shutdown_scheduler, start_scheduler
 from config_reader import config
 from handlers import setup_routers
 from middlewares import setup_middlewares
 from utils.set_commands import set_default_commands
-
-scheduler = AsyncIOScheduler()
 
 
 async def on_startup():
@@ -19,7 +16,7 @@ async def on_startup():
 
 
 async def on_shutdown():
-    scheduler.shutdown()
+    shutdown_scheduler()
 
 
 async def main():
