@@ -20,6 +20,5 @@ COPY pyproject.toml poetry.lock $APP_PATH/
 RUN poetry install --no-root --without dev
 
 COPY . $APP_PATH/
-COPY app/.env $APP_PATH/
 
 CMD ["poetry", "run", "python3", "app/bot.py"]
