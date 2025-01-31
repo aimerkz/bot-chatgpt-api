@@ -3,16 +3,23 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import LinkPreviewOptions
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from app.utils.logs import cleanup_logs
+from app.utils.scheduler import start_scheduler
 from config_reader import config
 from handlers import setup_routers
 from middlewares import setup_middlewares
 from utils.set_commands import set_default_commands
 
+scheduler = AsyncIOScheduler()
+
 
 async def on_startup():
-    asyncio.create_task(cleanup_logs())
+    start_scheduler()
+
+
+async def on_shutdown():
+    scheduler.shutdown()
 
 
 async def main():
@@ -31,9 +38,11 @@ async def main():
     setup_routers(dp)
     setup_middlewares(dp)
 
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+
     await set_default_commands(bot)
     await bot.delete_webhook(drop_pending_updates=True)
-    await on_startup()
     await dp.start_polling(bot)
 
 

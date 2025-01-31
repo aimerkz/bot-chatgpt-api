@@ -20,11 +20,11 @@ class OpenAIClient:
     max_history_length: int = 10
     model: str = 'gpt-4o-mini'
     semaphore: Semaphore
-    max_requests_to_image: int = 5
+    max_requests_to_api: int = 5
 
     def __init__(self, client: AsyncOpenAI) -> None:
         self.client = client
-        self.semaphore = Semaphore(self.max_requests_to_image)
+        self.semaphore = Semaphore(self.max_requests_to_api)
 
     async def ask(
         self,
