@@ -1,8 +1,8 @@
 from aiogram import Dispatcher
 
-from app.handlers.actions import action_router
-from app.handlers.images import setup_image_routers
-from app.handlers.others import other_router
+from handlers.actions import action_router
+from handlers.images import setup_image_routers
+from handlers.others import other_router
 
 
 def setup_routers(dp: Dispatcher) -> Dispatcher:

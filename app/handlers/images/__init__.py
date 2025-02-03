@@ -1,7 +1,7 @@
 from aiogram import Router
 
-from app.handlers.images.base import image_router
-from app.handlers.images.generation import generation_router
+from handlers.images.base import image_router
+from handlers.images.generation import generation_router
 
 
 def setup_image_routers() -> Router:

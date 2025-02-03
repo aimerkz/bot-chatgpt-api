@@ -4,14 +4,14 @@ from aiogram import BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from app.exceptions.openai import (
+from exceptions.openai import (
     BadRequestOIException,
     NotFoundOIException,
     PermissionOIException,
     RateLimitImageOIException,
     ServerOIException,
 )
-from app.inlines.actions import get_initial_keyboard
+from inlines.actions import get_initial_keyboard
 
 
 class OpenAIExceptionMiddleware(BaseMiddleware):

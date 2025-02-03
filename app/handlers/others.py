@@ -2,8 +2,8 @@ from aiogram import Router
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 
-from app.inlines.actions import get_continue_keyboard, get_initial_keyboard
-from app.states.waiting import WaitingState
+from inlines.actions import get_continue_keyboard, get_initial_keyboard
+from states.waiting import WaitingState
 
 other_router = Router(name=__name__)
 

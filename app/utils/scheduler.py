@@ -1,8 +1,8 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from app.utils.logs import cleanup_logs
+from utils.logs import cleanup_logs
 
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(timezone='UTC')
 
 
 def start_scheduler():

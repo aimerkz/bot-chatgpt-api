@@ -3,10 +3,10 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from app.clients.openai import OpenAIClient
-from app.inlines.actions import get_continue_keyboard, get_initial_keyboard
-from app.states.waiting import WaitingState
-from app.utils.enums import ActionsEnum
+from clients.openai import OpenAIClient
+from inlines.actions import get_continue_keyboard, get_initial_keyboard
+from states.waiting import WaitingState
+from utils.enums import ActionsEnum
 
 action_router = Router(name=__name__)
 
