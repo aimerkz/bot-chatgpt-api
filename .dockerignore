@@ -1,3 +1,16 @@
-.git*
+.git/*
+.gitignore
+
 *.md
+
 logs/
+*.txt
+
+.env*
+.venv*/
+venv*/
+
+.vscode/
+.idea/
+
+__pycache__*/

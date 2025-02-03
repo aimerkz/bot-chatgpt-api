@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 from openai import AsyncOpenAI
 
-from app.clients.openai import OpenAIClient
+from clients.openai import OpenAIClient
 
 
 class OpenAIMiddleware(BaseMiddleware):

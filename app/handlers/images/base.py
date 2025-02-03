@@ -3,8 +3,8 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from app.states.waiting import WaitingState
-from app.utils.enums import ActionsEnum
+from states.waiting import WaitingState
+from utils.enums import ActionsEnum
 
 image_router = Router(name=__name__)
 

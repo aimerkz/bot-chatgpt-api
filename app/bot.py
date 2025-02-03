@@ -4,10 +4,10 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import LinkPreviewOptions
 
-from app.utils.scheduler import shutdown_scheduler, start_scheduler
 from config_reader import config
 from handlers import setup_routers
 from middlewares import setup_middlewares
+from utils.scheduler import shutdown_scheduler, start_scheduler
 from utils.set_commands import set_default_commands
 
 

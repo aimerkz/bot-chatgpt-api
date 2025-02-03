@@ -1,6 +1,6 @@
 import asyncio
 
-from app.clients.openai import OpenAIClient
+from clients.openai import OpenAIClient
 
 
 async def generate_images(

@@ -1,4 +1,4 @@
-from app.exceptions.base import BaseInternalException
+from exceptions.base import BaseInternalException
 
 
 class PermissionOIException(BaseInternalException):

@@ -3,10 +3,10 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InputMediaPhoto, Message
 
-from app.clients.openai import OpenAIClient
-from app.inlines.actions import get_base_keyboard, get_keyboard_after_get_images
-from app.states.waiting import WaitingState
-from app.utils.images import generate_images
+from clients.openai import OpenAIClient
+from inlines.actions import get_base_keyboard, get_keyboard_after_get_images
+from states.waiting import WaitingState
+from utils.images import generate_images
 
 generation_router = Router(name=__name__)
 

@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from app.utils.enums import ActionsEnum
+from utils.enums import ActionsEnum
 
 
 def get_base_keyboard() -> InlineKeyboardMarkup:

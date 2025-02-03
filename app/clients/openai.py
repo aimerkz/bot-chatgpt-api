@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import openai
 from openai import AsyncOpenAI
 
-from app.exceptions.openai import (
+from exceptions.openai import (
     BadRequestOIException,
     NotFoundOIException,
     PermissionOIException,
