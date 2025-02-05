@@ -6,7 +6,7 @@ from cachetools import TTLCache
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    def __init__(self, time_limit: int = 2) -> None:
+    def __init__(self, time_limit: int = 1) -> None:
         self.limit = TTLCache(maxsize=1000, ttl=time_limit)
 
     async def __call__(
@@ -17,6 +17,7 @@ class ThrottlingMiddleware(BaseMiddleware):
     ) -> Any:
         user_id = event.from_user.id
         if user_id in self.limit:
+            await event.answer('Слишком много сообщений 😓, попробуй через 1 сек')
             return
         else:
             self.limit[user_id] = None
