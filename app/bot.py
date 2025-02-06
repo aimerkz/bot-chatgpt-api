@@ -10,7 +10,7 @@ from middlewares import setup_middlewares
 from utils.set_commands import set_default_commands
 
 
-async def main():
+async def main() -> None:
     bot = Bot(
         token=config.bot_token.get_secret_value(),
         default=DefaultBotProperties(

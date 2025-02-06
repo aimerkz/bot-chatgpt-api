@@ -1,8 +1,10 @@
-from typing import Any, Awaitable, Callable, Dict
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
 from cachetools import TTLCache
+
+if TYPE_CHECKING:
+    from aiogram.types import Message, TelegramObject
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -11,11 +13,11 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
+        event: 'Message',
         data: Dict[str, Any],
     ) -> Any:
-        user_id = event.from_user.id
+        user_id: int = event.from_user.id
         if user_id in self.limit:
             await event.answer('Слишком много сообщений 😓, попробуй через 1 сек')
             return

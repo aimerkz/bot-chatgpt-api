@@ -1,10 +1,12 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
-from typing import Any, Awaitable, Callable, Dict
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict, Optional
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+
+if TYPE_CHECKING:
+    from aiogram.types import Message, TelegramObject
 
 
 class LoggingMiddleware(BaseMiddleware):
@@ -14,7 +16,7 @@ class LoggingMiddleware(BaseMiddleware):
 
     def __init__(
         self,
-        logger: logging.Logger = None,
+        logger: Optional[logging.Logger] = None,
     ) -> None:
         self.logger = logger or logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -22,18 +24,23 @@ class LoggingMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
+        event: 'Message',
         data: Dict[str, Any],
     ):
-        text_message = (
-            event.text
-            if len(event.text) < self.max_length_text
-            else event.text[: self.max_length_text]
-        )
-        self.logger.info(
-            f'Получено сообщение от {event.from_user.full_name}: {text_message}'
-        )
+        text_message: Optional[str] = event.text
+
+        if text_message:
+            text_message = (
+                text_message
+                if len(text_message) < self.max_length_text
+                else text_message[: self.max_length_text]
+            )
+
+            self.logger.info(
+                f'Получено сообщение от {event.from_user.full_name}: {text_message}'
+            )
+
         return await handler(event, data)
 
     def _setup_handler(self):
@@ -60,7 +67,7 @@ class LoggingMiddleware(BaseMiddleware):
         self.logger.addHandler(handler)
 
     @staticmethod
-    def _flip_name(log_path: str):
+    def _flip_name(log_path: str) -> str:
         log_dir, log_filename = os.path.split(log_path)
         _, timestamp = log_filename.rsplit('.', 1)
         return os.path.join(log_dir, f'logs-{timestamp}.log')
