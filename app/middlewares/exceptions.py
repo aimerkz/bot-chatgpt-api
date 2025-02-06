@@ -1,8 +1,6 @@
-from typing import Any, Awaitable, Callable, Dict
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict, Optional
 
 from aiogram import BaseMiddleware
-from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
 
 from exceptions.openai import (
     BadRequestOIException,
@@ -13,15 +11,19 @@ from exceptions.openai import (
 )
 from inlines.actions import get_initial_keyboard
 
+if TYPE_CHECKING:
+    from aiogram.fsm.context import FSMContext
+    from aiogram.types import Message, TelegramObject
+
 
 class OpenAIExceptionMiddleware(BaseMiddleware):
     async def __call__(
         self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
+        event: 'Message',
         data: dict[str, Any],
     ):
-        state: FSMContext = data.get('state')
+        state: Optional['FSMContext'] = data.get('state')
 
         try:
             await handler(event, data)
@@ -36,9 +38,9 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
 
     async def _handle_exception(
         self,
-        event: Message,
+        event: 'Message',
         exception: Exception,
-        state: FSMContext,
+        state: 'FSMContext',
     ):
         error_messages = {
             PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API или используй VPN',
@@ -53,7 +55,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
         await self.return_to_main_menu(event, state)
 
     @staticmethod
-    async def return_to_main_menu(event: Message, state: FSMContext):
+    async def return_to_main_menu(event: 'Message', state: 'FSMContext') -> None:
         await event.answer(
             text='Попробуем начать заново 😊',
             reply_markup=get_initial_keyboard(),

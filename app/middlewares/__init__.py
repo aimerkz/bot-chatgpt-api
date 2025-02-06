@@ -6,7 +6,7 @@ from aiogram.utils.chat_action import ChatActionMiddleware
 from config_reader import config
 from middlewares.exceptions import OpenAIExceptionMiddleware
 from middlewares.logs import LoggingMiddleware
-from middlewares.openai import OpenAIMiddleware
+from middlewares.openai_client import OpenAIMiddleware
 from middlewares.throttling import ThrottlingMiddleware
 
 

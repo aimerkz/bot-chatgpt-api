@@ -1,5 +1,5 @@
 from asyncio import Semaphore
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import openai
 from openai import AsyncOpenAI
@@ -28,7 +28,7 @@ class OpenAIClient:
 
     async def ask(
         self,
-        user_text: str,
+        user_text: Optional[str],
         state: 'FSMContext',
     ) -> str:
         return await self._handle_openai_error(self._ask, user_text, state)
@@ -37,7 +37,7 @@ class OpenAIClient:
         self,
         user_text: str,
         state: 'FSMContext',
-    ) -> str:
+    ) -> Optional[str]:
         conversation_history = await state.get_data()
         conversation_history = conversation_history.get('history', [])
         conversation_history.append(self._make_content(role='user', user_text=user_text))
@@ -64,7 +64,7 @@ class OpenAIClient:
             self._generate_image, description, image_count
         )
 
-    async def _generate_image(self, description: str, image_count: int) -> str:
+    async def _generate_image(self, description: str, image_count: int) -> Optional[str]:
         async with self.semaphore:
             response = await self.client.images.generate(
                 prompt=description,
@@ -92,7 +92,7 @@ class OpenAIClient:
             raise ServerOIException(error.message, error.status_code)
 
     @staticmethod
-    def _make_content(role: str, user_text: str) -> dict[str, str]:
+    def _make_content(role: str, user_text: Optional[str]) -> dict[str, Optional[str]]:
         return {
             'role': role,
             'content': user_text,
