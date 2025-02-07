@@ -1,11 +1,11 @@
 from aiogram import F, Router, flags
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from inlines.actions import get_continue_keyboard, get_initial_keyboard
-from states.waiting import WaitingState
+from keyboards.actions import get_exit_keyboard, get_initial_keyboard
+from states.state import DialogState
 from utils.enums import ActionsEnum
 
 action_router = Router(name=__name__)
@@ -35,28 +35,29 @@ async def cmd_help(message: Message):
     await message.answer(help_text)
 
 
-@action_router.callback_query(F.data == ActionsEnum.ASK)
-async def handle_ask_question(callback: CallbackQuery, state: FSMContext):
+@action_router.message(F.text == ActionsEnum.ASK.value)
+async def handle_ask_question(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Задать вопрос'"""
 
-    await callback.message.edit_text(
+    await message.answer(
         text='Отлично! Напиши свой вопрос, и я отправлю его ChatGPT',
+        reply_markup=ReplyKeyboardRemove(),
     )
-    await state.set_state(WaitingState.waiting_for_question)
+    await state.set_state(DialogState.active)
 
 
-@action_router.callback_query(F.data == ActionsEnum.NEW_QUESTION)
-async def handle_new_question(callback: CallbackQuery, state: FSMContext):
-    """Обработчик события по кнопке 'Задать новый вопрос'"""
+@action_router.message(F.text == ActionsEnum.EXIT.value)
+async def handle_handle_exit(message: Message, state: FSMContext):
+    """Обработчик события по кнопке 'Выйти'"""
 
     await state.clear()
-    await callback.message.edit_text(
-        text='Отлично! Напиши новый вопрос',
+    await message.answer(
+        text='До встречи 👋',
+        reply_markup=ReplyKeyboardRemove(),
     )
-    await state.set_state(WaitingState.waiting_for_question)
 
 
-@action_router.message(StateFilter(WaitingState.waiting_for_question))
+@action_router.message(StateFilter(DialogState.active))
 @flags.chat_action('typing')
 async def handle_question_input(
     message: Message,
@@ -71,29 +72,8 @@ async def handle_question_input(
     await state.update_data(last_response=answer)
 
     await message.reply(answer)
-    await state.set_state(WaitingState.waiting_for_button)
 
     await message.answer(
-        text='Что будем делать дальше?',
-        reply_markup=get_continue_keyboard(),
+        text='Можешь задать новый вопрос или нажать <b>Выйти</b>, чтобы завершить диалог',
+        reply_markup=get_exit_keyboard(),
     )
-
-
-@action_router.callback_query(F.data == ActionsEnum.ASK_AGAIN)
-async def handle_continue_chat(callback: CallbackQuery, state: FSMContext):
-    """Обработчик события по кнопке 'Продолжить общение'"""
-
-    await callback.message.edit_text(
-        text='Напиши свой следующий вопрос',
-    )
-    await state.set_state(WaitingState.waiting_for_question)
-
-
-@action_router.callback_query(F.data == ActionsEnum.EXIT)
-async def handle_handle_exit(query: CallbackQuery, state: FSMContext):
-    """Обработчик события по кнопке 'Выйти'"""
-
-    await query.message.edit_text(
-        text='До встречи 👋',
-    )
-    await state.clear()

@@ -1,25 +1,25 @@
 from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import Message
 
-from states.waiting import WaitingState
+from states.state import ImageState
 from utils.enums import ActionsEnum
 
 image_router = Router(name=__name__)
 
 
-@image_router.callback_query(F.data == ActionsEnum.GENERATE_IMAGE)
-async def handle_generate_image(callback: CallbackQuery, state: FSMContext):
+@image_router.message(F.text == ActionsEnum.GENERATE_IMAGE.value)
+async def handle_generate_image(message: Message, state: FSMContext):
     """Обработчик ввода числа генерируемых картинок"""
 
-    await callback.message.edit_text(
+    await message.answer(
         text='Сколько картинок хочешь сгенерировать? (Число от 1 до 3)',
     )
-    await state.set_state(WaitingState.waiting_for_image_count)
+    await state.set_state(ImageState.count_images)
 
 
-@image_router.message(StateFilter(WaitingState.waiting_for_image_count))
+@image_router.message(StateFilter(ImageState.count_images))
 async def handle_image_count(message: Message, state: FSMContext):
     """Обработчик ввода описания генерируемых картинок"""
 
@@ -28,7 +28,7 @@ async def handle_image_count(message: Message, state: FSMContext):
         if 1 <= count <= 3:
             await state.update_data(image_count=count)
             await message.answer(text='Опиши, какую картинку нужно сгенерировать')
-            await state.set_state(WaitingState.waiting_for_image_prompt)
+            await state.set_state(ImageState.to_generate)
         else:
             await message.answer('Введи число от 1 до 3')
     except ValueError:

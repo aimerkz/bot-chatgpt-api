@@ -1,17 +1,17 @@
 from aiogram import Router, flags
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InputMediaPhoto, Message
+from aiogram.types import InputMediaPhoto, Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from inlines.actions import get_base_keyboard, get_keyboard_after_get_images
-from states.waiting import WaitingState
+from keyboards.actions import get_keyboard_after_get_images
+from states.state import ImageState
 from utils.images import generate_images
 
 generation_router = Router(name=__name__)
 
 
-@generation_router.message(StateFilter(WaitingState.waiting_for_image_prompt))
+@generation_router.message(StateFilter(ImageState.to_generate))
 @flags.chat_action('upload_photo')
 async def handle_image_prompt(
     message: Message,
@@ -25,10 +25,9 @@ async def handle_image_prompt(
 
     await message.answer(
         text='Пришлю, как будет готово',
-        reply_markup=get_base_keyboard(),
+        reply_markup=ReplyKeyboardRemove(),
     )
 
-    await state.set_state(WaitingState.waiting_for_button)
     await send_generated_image(
         message,
         image_count,
@@ -53,7 +52,7 @@ async def send_generated_image(
         media=media_group,
     )
 
-    await state.set_state(WaitingState.waiting_for_button)
+    await state.clear()
     await message.answer(
         text='Что делаем дальше?',
         reply_markup=get_keyboard_after_get_images(),

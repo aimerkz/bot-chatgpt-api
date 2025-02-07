@@ -13,7 +13,7 @@ class NotFoundOIException(BaseInternalException):
     pass
 
 
-class RateLimitImageOIException(BaseInternalException):
+class RateLimitOIException(BaseInternalException):
     pass
 
 
