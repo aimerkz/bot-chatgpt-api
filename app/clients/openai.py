@@ -8,7 +8,7 @@ from exceptions.openai import (
     BadRequestOIException,
     NotFoundOIException,
     PermissionOIException,
-    RateLimitImageOIException,
+    RateLimitOIException,
     ServerOIException,
 )
 
@@ -87,7 +87,7 @@ class OpenAIClient:
         except openai.BadRequestError as error:
             raise BadRequestOIException(error.message, error.status_code)
         except openai.RateLimitError as error:
-            raise RateLimitImageOIException(error.message, error.status_code)
+            raise RateLimitOIException(error.message, error.status_code)
         except openai.InternalServerError as error:
             raise ServerOIException(error.message, error.status_code)
 
