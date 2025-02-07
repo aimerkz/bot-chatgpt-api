@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict, Optional
 
 from aiogram import BaseMiddleware
+from aiogram.exceptions import TelegramBadRequest
 
 from exceptions.openai import (
     BadRequestOIException,
@@ -33,6 +34,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             BadRequestOIException,
             RateLimitImageOIException,
             ServerOIException,
+            TelegramBadRequest,
         ) as error:
             await self._handle_exception(event, error, state)
 
@@ -48,6 +50,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
             RateLimitImageOIException: '😱 Слишком много запросов для генерации изображений',
             ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
+            TelegramBadRequest: '😢 Не получилось отправить ответ, попробуй позже',
         }
 
         error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')

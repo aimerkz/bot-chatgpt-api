@@ -30,16 +30,15 @@ class LoggingMiddleware(BaseMiddleware):
     ):
         text_message: Optional[str] = event.text
 
-        if text_message:
-            text_message = (
-                text_message
-                if len(text_message) < self.max_length_text
-                else text_message[: self.max_length_text]
-            )
+        text_message = (
+            text_message
+            if len(text_message) < self.max_length_text
+            else text_message[: self.max_length_text]  # type: ignore
+        )
 
-            self.logger.info(
-                f'Получено сообщение от {event.from_user.full_name}: {text_message}'
-            )
+        self.logger.info(
+            f'Получено сообщение от {event.from_user.full_name}: {text_message}'
+        )
 
         return await handler(event, data)
 
