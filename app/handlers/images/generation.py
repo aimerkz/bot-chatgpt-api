@@ -21,7 +21,7 @@ async def handle_image_prompt(
     """Обрабатчик события ввода описания изображения"""
 
     data = await state.get_data()
-    image_count = data.get('image_count', 1)
+    image_count = data.pop('image_count', 1)
 
     await message.answer(
         text='Пришлю, как будет готово',

@@ -11,6 +11,7 @@ from exceptions.openai import (
     RateLimitOIException,
     ServerOIException,
 )
+from utils.retry import retry_to_gpt_api
 
 if TYPE_CHECKING:
     from aiogram.fsm.context import FSMContext
@@ -26,6 +27,7 @@ class OpenAIClient:
         self.client = client
         self.semaphore = Semaphore(self.max_requests_to_api)
 
+    @retry_to_gpt_api()
     async def ask(
         self,
         user_text: Optional[str],
@@ -64,6 +66,7 @@ class OpenAIClient:
             self._generate_image, description, image_count
         )
 
+    @retry_to_gpt_api()
     async def _generate_image(self, description: str, image_count: int) -> Optional[str]:
         async with self.semaphore:
             response = await self.client.images.generate(
