@@ -12,9 +12,10 @@ action_router = Router(name=__name__)
 
 
 @action_router.message(Command('start'))
-async def handle_start_command(message: Message):
+async def handle_start_command(message: Message, state: FSMContext):
     """Обработчик события команды /start"""
 
+    await state.clear()
     await message.answer(
         text=f'Привет 🤝, {message.from_user.full_name}! Пожалуйста, выбери действие:',
         reply_markup=get_initial_keyboard(),

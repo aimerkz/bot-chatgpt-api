@@ -1,14 +1,14 @@
 from aiogram import Dispatcher
 
-from handlers.actions import action_router
+from handlers.chat import setup_chat_routers
 from handlers.images import setup_image_routers
-from handlers.others import other_router
+from handlers.others import setup_service_routers
 
 
 def setup_routers(dp: Dispatcher) -> Dispatcher:
     dp.include_routers(
-        action_router,
+        setup_chat_routers(),
         setup_image_routers(),
-        other_router,
+        setup_service_routers(),
     )
     return dp
