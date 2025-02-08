@@ -1,4 +1,5 @@
 import asyncio
+from functools import wraps
 from typing import Callable
 
 from openai import OpenAIError
@@ -10,6 +11,7 @@ def retry_to_gpt_api(
     backoff: int = 2,
 ):
     def decorator(func: Callable):
+        @wraps(func)
         async def wrapper(*args, **kwargs):
             attempts = 0
 
@@ -20,6 +22,7 @@ def retry_to_gpt_api(
                     attempts += 1
                     if attempts >= max_attempts:
                         raise error
+
                     wait_time = delay * (backoff ** (attempts - 1))
                     await asyncio.sleep(wait_time)
 
