@@ -61,12 +61,12 @@ class OpenAIClient:
         await state.update_data(history=conversation_history)
         return assistant_reply
 
+    @retry_to_gpt_api()
     async def generate_image(self, description: str, image_count: int) -> str:
         return await self._handle_openai_error(
             self._generate_image, description, image_count
         )
 
-    @retry_to_gpt_api()
     async def _generate_image(self, description: str, image_count: int) -> Optional[str]:
         async with self.semaphore:
             response = await self.client.images.generate(
