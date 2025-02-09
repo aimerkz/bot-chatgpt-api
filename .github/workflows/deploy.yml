@@ -32,6 +32,7 @@ jobs:
             
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> ./app/.env
             echo "API_KEY=${{ secrets.API_KEY }}" >> ./app/.env
+            echo "BOT_ENV=${{ secrets.BOT_ENV }}" >> ./app/.env
 
-            docker compose down --rmi all -v
+            docker compose down --rmi all
             docker compose up -d --build

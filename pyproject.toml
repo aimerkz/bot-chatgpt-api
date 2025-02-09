@@ -70,11 +70,13 @@ line-ending = "auto"
 [tool.pyright]
 typeCheckingMode = "basic"
 
+reportUnknownArgumentType = "none"
 reportMissingImports = "error"
 reportMissingTypeStubs = "none"
 reportOptionalMemberAccess = "none"
 reportAttributeAccessIssue = "none"
 reportArgumentType = "none"
+reportIncompatibleMethodOverride = "warning"
 
 pythonVersion = "3.12"
 pythonPlatform = "Linux"

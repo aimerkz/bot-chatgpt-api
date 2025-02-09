@@ -4,11 +4,17 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import InputMediaPhoto, Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from keyboards.actions import get_keyboard_after_get_images
+from config_reader import config
+from keyboards.actions import get_initial_keyboard
+from middlewares.exceptions import OpenAIExceptionMiddleware
+from middlewares.openai_client import OpenAIMiddleware
 from states.state import ImageState
 from utils.images import generate_images
 
 generation_router = Router(name=__name__)
+
+generation_router.message.middleware(OpenAIMiddleware(config.api_key.get_secret_value()))
+generation_router.message.middleware(OpenAIExceptionMiddleware())
 
 
 @generation_router.message(StateFilter(ImageState.to_generate))
@@ -55,5 +61,5 @@ async def send_generated_image(
     await state.clear()
     await message.answer(
         text='Что делаем дальше?',
-        reply_markup=get_keyboard_after_get_images(),
+        reply_markup=get_initial_keyboard(),
     )

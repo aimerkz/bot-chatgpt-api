@@ -32,7 +32,7 @@ class OpenAIClient:
         self,
         user_text: Optional[str],
         state: 'FSMContext',
-    ) -> str:
+    ) -> Optional[str]:
         return await self._handle_openai_error(self._ask, user_text, state)
 
     async def _ask(
@@ -62,7 +62,7 @@ class OpenAIClient:
         return assistant_reply
 
     @retry_to_gpt_api()
-    async def generate_image(self, description: str, image_count: int) -> str:
+    async def generate_image(self, description: str, image_count: int) -> Optional[str]:
         return await self._handle_openai_error(
             self._generate_image, description, image_count
         )
@@ -80,7 +80,7 @@ class OpenAIClient:
         return response.data[0].url
 
     @staticmethod
-    async def _handle_openai_error(func, *args, **kwargs):
+    async def _handle_openai_error(func, *args, **kwargs) -> None:
         try:
             return await func(*args, **kwargs)
         except openai.PermissionDeniedError as error:
