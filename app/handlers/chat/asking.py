@@ -1,40 +1,23 @@
 from aiogram import F, Router, flags
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from keyboards.actions import get_exit_keyboard, get_initial_keyboard
+from config_reader import config
+from keyboards.actions import get_exit_keyboard
+from middlewares.exceptions import OpenAIExceptionMiddleware
+from middlewares.openai_client import OpenAIMiddleware
 from states.state import DialogState
 from utils.enums import ActionsEnum
 
-action_router = Router(name=__name__)
+asking_router = Router(name=__name__)
+
+asking_router.message.middleware(OpenAIMiddleware(config.api_key.get_secret_value()))
+asking_router.message.middleware(OpenAIExceptionMiddleware())
 
 
-@action_router.message(Command('start'))
-async def handle_start_command(message: Message, state: FSMContext):
-    """Обработчик события команды /start"""
-
-    await state.clear()
-    await message.answer(
-        text=f'Привет 🤝, {message.from_user.full_name}! Пожалуйста, выбери действие:',
-        reply_markup=get_initial_keyboard(),
-    )
-
-
-@action_router.message(Command('help'))
-async def cmd_help(message: Message):
-    help_text = (
-        '<b>Доступные действия:</b>\n\n'
-        '<b>1. Задать вопрос</b> — чтобы задать новый вопрос боту\n'
-        '<b>2. Выйти</b> — чтобы выйти из текущего диалога\n'
-        '<b>3. Получить картинку</b> — сгенерировать картинку (от 1 до 3) по запросу\n'
-        'Активируй бота командной /start, чтобы продолжить!'
-    )
-    await message.answer(help_text)
-
-
-@action_router.message(F.text == ActionsEnum.ASK.value)
+@asking_router.message(F.text == ActionsEnum.ASK.value)
 async def handle_ask_question(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Задать вопрос'"""
 
@@ -45,7 +28,7 @@ async def handle_ask_question(message: Message, state: FSMContext):
     await state.set_state(DialogState.active)
 
 
-@action_router.message(F.text == ActionsEnum.EXIT.value)
+@asking_router.message(F.text == ActionsEnum.EXIT.value)
 async def handle_handle_exit(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Выйти'"""
 
@@ -56,7 +39,7 @@ async def handle_handle_exit(message: Message, state: FSMContext):
     )
 
 
-@action_router.message(StateFilter(DialogState.active))
+@asking_router.message(StateFilter(DialogState.active))
 @flags.chat_action('typing')
 async def handle_question_input(
     message: Message,
