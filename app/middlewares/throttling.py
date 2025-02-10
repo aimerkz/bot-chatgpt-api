@@ -18,10 +18,10 @@ class ThrottlingMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         user_id: int = event.from_user.id
+
         if user_id in self.limit:
             await event.answer('Слишком много сообщений 😓, попробуй через 1 сек')
             return
-        else:
-            self.limit[user_id] = None
 
+        self.limit[user_id] = None
         return await handler(event, data)
