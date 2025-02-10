@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
-from aiogram.exceptions import TelegramBadRequest
 
 from exceptions.openai import (
     BadRequestOIException,
@@ -31,7 +30,6 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             BadRequestOIException,
             RateLimitOIException,
             ServerOIException,
-            TelegramBadRequest,
         ) as error:
             await self._handle_exception(event, error)
 
@@ -41,12 +39,11 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
         exception: Exception,
     ):
         error_messages = {
-            PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API или используй VPN',
+            PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API',
             NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
             BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
             RateLimitOIException: '😱 Слишком много запросов к ChatGPT',
             ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
-            TelegramBadRequest: '😢 Не получилось отправить ответ, попробуй позже',
         }
 
         error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')

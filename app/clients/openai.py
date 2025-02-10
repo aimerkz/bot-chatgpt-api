@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class OpenAIClient:
     max_history_length: int = 10
-    model: str = 'gpt-4o-mini'
+    model: str = 'gpt-3.5-turbo'
     semaphore: Semaphore
     max_requests_to_api: int = 5
 
