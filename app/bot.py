@@ -33,5 +33,7 @@ async def main() -> None:
 
 if __name__ == '__main__':
     import asyncio
+    from contextlib import suppress
 
-    asyncio.run(main())
+    with suppress(KeyboardInterrupt):
+        asyncio.run(main())

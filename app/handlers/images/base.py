@@ -31,6 +31,6 @@ async def handle_image_count(message: Message, state: FSMContext):
             await message.answer(text='Опиши, какую картинку нужно сгенерировать')
             await state.set_state(ImageState.to_generate)
         else:
-            await message.answer('Введи число от 1 до 3')
-    except ValueError:
-        await message.answer('Введи корректное число')
+            await message.answer('Введи число от 1 до 3 😠')
+    except (TypeError, ValueError):
+        await message.answer('Введи число от 1 до 3 😠')

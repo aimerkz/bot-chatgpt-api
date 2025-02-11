@@ -5,6 +5,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
 from config_reader import config
+from filters.type_message import TextOrImageFilter
 from keyboards.actions import get_exit_keyboard
 from middlewares.exceptions import OpenAIExceptionMiddleware
 from middlewares.openai_client import OpenAIMiddleware
@@ -39,7 +40,10 @@ async def handle_handle_exit(message: Message, state: FSMContext):
     )
 
 
-@asking_router.message(StateFilter(DialogState.active))
+@asking_router.message(
+    StateFilter(DialogState.active),
+    TextOrImageFilter(),
+)
 @flags.chat_action('typing')
 async def handle_question_input(
     message: Message,
