@@ -5,6 +5,7 @@ from aiogram.types import InputMediaPhoto, Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
 from config_reader import config
+from filters.type_message import TextFilter
 from keyboards.actions import get_initial_keyboard
 from middlewares.exceptions import OpenAIExceptionMiddleware
 from middlewares.openai_client import OpenAIMiddleware
@@ -17,7 +18,10 @@ generation_router.message.middleware(OpenAIMiddleware(config.api_key.get_secret_
 generation_router.message.middleware(OpenAIExceptionMiddleware())
 
 
-@generation_router.message(StateFilter(ImageState.to_generate))
+@generation_router.message(
+    StateFilter(ImageState.to_generate),
+    TextFilter(),
+)
 @flags.chat_action('upload_photo')
 async def handle_image_prompt(
     message: Message,
