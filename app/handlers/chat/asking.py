@@ -10,7 +10,8 @@ from keyboards.actions import get_exit_keyboard
 from middlewares.exceptions import OpenAIExceptionMiddleware
 from middlewares.openai_client import OpenAIMiddleware
 from states.state import DialogState
-from utils.enums import ActionsEnum
+from utils.enums import ActionsEnum, MessageTypeEnum
+from utils.images import get_image_url
 
 asking_router = Router(name=__name__)
 
@@ -54,9 +55,22 @@ async def handle_question_input(
 
     await message.answer('Отправил твой вопрос, ждем ответ ⌛')
 
-    answer = await openai_client.ask(message.text, state)
-    await state.update_data(last_response=answer)
+    if message.text:
+        answer = await openai_client.ask(
+            user_text=message.text,
+            state=state,
+            type_message=MessageTypeEnum.TEXT,
+        )
 
+    else:
+        image_url = await get_image_url(message)
+        answer = await openai_client.ask(
+            image_url=image_url,
+            type_message=MessageTypeEnum.IMAGE_URL,
+            state=state,
+        )
+
+    await state.update_data(last_response=answer)
     await message.reply(answer)
 
     await message.answer(

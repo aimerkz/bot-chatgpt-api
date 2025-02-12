@@ -11,6 +11,7 @@ from exceptions.openai import (
     RateLimitOIException,
     ServerOIException,
 )
+from utils.enums import MessageTypeEnum
 from utils.retry import retry_to_gpt_api
 
 if TYPE_CHECKING:
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 
 class OpenAIClient:
     max_history_length: int = 10
-    model: str = 'gpt-3.5-turbo'
+    model: str = 'gpt-4o-mini'
     semaphore: Semaphore
     max_requests_to_api: int = 5
 
@@ -30,19 +31,42 @@ class OpenAIClient:
     @retry_to_gpt_api()
     async def ask(
         self,
-        user_text: Optional[str],
         state: 'FSMContext',
+        user_text: Optional[str] = None,
+        image_url: Optional[str] = None,
+        type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
     ) -> Optional[str]:
-        return await self._handle_openai_error(self._ask, user_text, state)
+        return await self._handle_openai_error(
+            self._ask,
+            user_text,
+            image_url,
+            type_message,
+            state,
+        )
 
     async def _ask(
         self,
-        user_text: str,
+        user_text: Optional[str],
+        image_url: Optional[str],
+        type_message: MessageTypeEnum,
         state: 'FSMContext',
     ) -> Optional[str]:
         conversation_history = await state.get_data()
         conversation_history = conversation_history.get('history', [])
-        conversation_history.append(self._make_content(role='user', user_text=user_text))
+
+        match type_message:
+            case MessageTypeEnum.TEXT:
+                conversation_history.append(
+                    self._make_content(role='user', user_text=user_text)
+                )
+            case MessageTypeEnum.IMAGE_URL:
+                conversation_history.append(
+                    self._make_content(
+                        role='user',
+                        image_url=image_url,
+                        type_message=MessageTypeEnum.IMAGE_URL,
+                    ),
+                )
 
         if len(conversation_history) > self.max_history_length:
             conversation_history = conversation_history[-self.max_history_length :]
@@ -95,8 +119,23 @@ class OpenAIClient:
             raise ServerOIException(error.message, error.status_code)
 
     @staticmethod
-    def _make_content(role: str, user_text: Optional[str]) -> dict[str, Optional[str]]:
-        return {
-            'role': role,
-            'content': user_text,
-        }
+    def _make_content(
+        role: str,
+        user_text: Optional[str] = None,
+        image_url: Optional[str] = None,
+        type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
+    ) -> dict[str, Optional[str] | list[dict]]:  # type: ignore
+        match type_message:
+            case MessageTypeEnum.TEXT:
+                return {'role': role, 'content': user_text}
+
+            case MessageTypeEnum.IMAGE_URL:
+                return {
+                    'role': role,
+                    'content': [
+                        {
+                            'type': MessageTypeEnum.IMAGE_URL.value,
+                            'image_url': {'url': image_url},
+                        },
+                    ],
+                }

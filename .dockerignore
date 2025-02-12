@@ -1,16 +1,19 @@
-.git/*
+.git/
 .gitignore
 
-*.md
+README.md
 
 logs/
-*.txt
 
-.env*
-.venv*/
-venv*/
+.env
+env/
+.venv/
+venv/
 
 .vscode/
 .idea/
 
-__pycache__*/
+__pycache__/
+
+.ruff_cache/
+.mypy_cache/

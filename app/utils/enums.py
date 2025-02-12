@@ -10,3 +10,8 @@ class ActionsEnum(str, Enum):
 class BotEnvEnum(str, Enum):
     DEV = 'dev'
     PROD = 'prod'
+
+
+class MessageTypeEnum(str, Enum):
+    TEXT = 'text'
+    IMAGE_URL = 'image_url'
