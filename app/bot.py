@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import LinkPreviewOptions
 
 from config_reader import config
@@ -22,7 +22,12 @@ async def main() -> None:
         ),
     )
 
-    dp = Dispatcher(storage=MemoryStorage())
+    storage = RedisStorage.from_url(
+        url=config.redis_dsn,
+        connection_kwargs={'decode_responses': True},
+    )
+
+    dp = Dispatcher(storage=storage, bot=bot)
     setup_routers(dp)
     setup_middlewares(dp)
 

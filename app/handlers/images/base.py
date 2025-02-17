@@ -9,7 +9,7 @@ from utils.enums import ActionsEnum
 image_router = Router(name=__name__)
 
 
-@image_router.message(F.text == ActionsEnum.GENERATE_IMAGE.value)
+@image_router.message(F.text == ActionsEnum.GENERATE_IMAGE)
 async def handle_generate_image(message: Message, state: FSMContext):
     """Обработчик ввода числа генерируемых картинок"""
 

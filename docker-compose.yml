@@ -1,4 +1,5 @@
 services:
+
   bot:
     build:
       context: .
@@ -10,7 +11,30 @@ services:
     volumes:
       - ./logs:/src/logs/
     env_file:
-      - ./app/.env
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:7.2.5-alpine
+    container_name: 'redis'
+    restart: unless-stopped
+    networks:
+      - bot-network
+    volumes:
+      - ./redis_data:/data/
+    environment:
+      REDIS_PASSWORD: $REDIS_PASSWORD
+    expose:
+      - $REDIS_PORT
+    command: redis-server --requirepass $REDIS_PASSWORD
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", $REDIS_PASSWORD, "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
 
 networks:
   bot-network:

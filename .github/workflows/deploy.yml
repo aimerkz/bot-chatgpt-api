@@ -30,9 +30,14 @@ jobs:
               cd bot-chatgpt-api/ && git pull origin master
             fi
             
-            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> ./app/.env
-            echo "API_KEY=${{ secrets.API_KEY }}" >> ./app/.env
-            echo "BOT_ENV=${{ secrets.BOT_ENV }}" >> ./app/.env
+            echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> ./.env
+            echo "API_KEY=${{ secrets.API_KEY }}" >> ./.env
+            echo "BOT_ENV=${{ secrets.BOT_ENV }}" >> ./.env
+            echo "ADMIN_ID=${{ secrets.ADMIN_ID }}" >> ./.env
+            echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> ./.env
+            echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> ./.env
+            echo "REDIS_DB=${{ secrets.REDIS_DB }}" >> ./.env
+            echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> ./.env
 
             docker compose down --rmi all
             docker compose up -d --build

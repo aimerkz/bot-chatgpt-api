@@ -54,5 +54,5 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
     async def return_to_main_menu(event: 'Message') -> None:
         await event.answer(
             text='Попробуем начать заново 😊',
-            reply_markup=get_initial_keyboard(),
+            reply_markup=get_initial_keyboard(event),
         )
