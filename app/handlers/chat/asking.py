@@ -19,7 +19,7 @@ asking_router.message.middleware(OpenAIMiddleware(config.api_key.get_secret_valu
 asking_router.message.middleware(OpenAIExceptionMiddleware())
 
 
-@asking_router.message(F.text == ActionsEnum.ASK.value)
+@asking_router.message(F.text == ActionsEnum.ASK)
 async def handle_ask_question(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Задать вопрос'"""
 
@@ -30,7 +30,7 @@ async def handle_ask_question(message: Message, state: FSMContext):
     await state.set_state(DialogState.active)
 
 
-@asking_router.message(F.text == ActionsEnum.EXIT.value)
+@asking_router.message(F.text == ActionsEnum.EXIT)
 async def handle_handle_exit(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Выйти'"""
 

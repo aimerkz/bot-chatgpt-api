@@ -8,3 +8,7 @@ class DialogState(StatesGroup):
 class ImageState(StatesGroup):
     count_images = State()
     to_generate = State()
+
+
+class BotManagementState(StatesGroup):
+    manage = State()

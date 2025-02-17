@@ -1,9 +1,9 @@
 from aiogram import Router
 
-from handlers.others.service import service_router
+from handlers.others.state_check import other_router
 
 
-def setup_service_routers() -> Router:
+def setup_others_routers() -> Router:
     router = Router()
-    router.include_router(service_router)
+    router.include_router(other_router)
     return router

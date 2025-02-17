@@ -21,15 +21,17 @@ class LoggingMiddleware(BaseMiddleware):
         event: 'Update',
         data: Dict[str, Any],
     ):
-        text_message: str = event.message.text or ''
-        text_message = (
-            text_message
-            if len(text_message) < self.max_length_text
-            else text_message[: self.max_length_text]
-        )
+        event_message = event.message
+        if event_message:
+            text_message: str = event.message.text or ''
+            text_message = (
+                text_message
+                if len(text_message) < self.max_length_text
+                else text_message[: self.max_length_text]
+            )
 
-        self.logger.info(
-            f'Получено сообщение от {event.message.from_user.full_name}: {text_message}'
-        )
+            self.logger.info(
+                f'Получено сообщение от {event.message.from_user.full_name}: {text_message}'
+            )
 
         return await handler(event, data)

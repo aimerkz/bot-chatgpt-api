@@ -65,5 +65,5 @@ async def send_generated_image(
     await state.clear()
     await message.answer(
         text='Что делаем дальше?',
-        reply_markup=get_initial_keyboard(),
+        reply_markup=get_initial_keyboard(message),
     )
