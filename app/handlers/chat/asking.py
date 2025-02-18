@@ -1,4 +1,4 @@
-from aiogram import F, Router, flags
+from aiogram import F, Router, flags, html
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
@@ -74,6 +74,6 @@ async def handle_question_input(
     await message.reply(answer)
 
     await message.answer(
-        text='Можешь задать новый вопрос или нажать <b>Выйти</b>, чтобы завершить диалог',
+        text=f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
         reply_markup=get_exit_keyboard(),
     )

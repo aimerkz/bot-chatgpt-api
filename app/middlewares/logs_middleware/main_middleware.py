@@ -23,7 +23,7 @@ class LoggingMiddleware(BaseMiddleware):
     ):
         event_message = event.message
         if event_message:
-            text_message: str = event.message.text or ''
+            text_message: str = event_message.text or ''
             text_message = (
                 text_message
                 if len(text_message) < self.max_length_text
