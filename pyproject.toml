@@ -9,13 +9,16 @@ readme = "README.md"
 python = "^3.12"
 aiogram = "^3.17.0"
 pydantic-settings = "^2.7.1"
-openai = "^1.60.0"
+openai = "^1.63.0"
 cachetools = "^5.5.1"
 redis = "^5.2.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.9.3"
 pyright = "^1.1.393"
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.3"
+pytest-env = "^1.1.5"
 
 [build-system]
 requires = ["poetry-core"]
@@ -82,3 +85,23 @@ reportIncompatibleMethodOverride = "warning"
 
 pythonVersion = "3.12"
 pythonPlatform = "Linux"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+pythonpath = ["app"]
+testpaths = ["tests"]
+console_output_style = "progress"
+asyncio_mode = "auto"
+addopts = "-ra"
+asyncio_default_fixture_loop_scope = "function"
+log_cli = false
+env = [
+    "BOT_TOKEN=token",
+    "API_KEY=api_key",
+    "BOT_ENV=dev",
+    "ADMIN_ID=666",
+    "REDIS_HOST=localhost",
+    "REDIS_PORT=6379",
+    "REDIS_DB=0",
+    "REDIS_PASSWORD=pass"
+]

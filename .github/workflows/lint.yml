@@ -1,4 +1,4 @@
-name: Lint code with ruff
+name: Ruff
 
 on:
   push:
