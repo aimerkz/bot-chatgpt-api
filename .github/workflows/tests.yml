@@ -1,4 +1,4 @@
-name: Pyright
+name: Pytest
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   lint:
-    name: Run pyright check
+    name: Run pytest
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,15 @@ jobs:
           poetry install --no-root
           echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-      - name: Run pyright
-        uses: jakebailey/pyright-action@v2
+      - name: Install pytest-md and pytest-emoji
+        run: poetry add --group dev pytest-md pytest-emoji
+
+      - name: Run pytest
+        uses: pavelzw/pytest-action@v2
         with:
-          project: "./pyproject.toml"
+          report-title: 'Test Report'
+          click-to-expand: true
+          emoji: true
+          job-summary: true
+          verbose: true
+          custom-arguments: '-c pyproject.toml'
