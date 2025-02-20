@@ -73,6 +73,7 @@ line-ending = "auto"
 
 [tool.pyright]
 typeCheckingMode = "basic"
+exclude = ["**/tests"]
 
 reportUnknownArgumentType = "none"
 reportMissingImports = "error"

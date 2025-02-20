@@ -53,7 +53,7 @@ async def handle_question_input(
 ):
     """Обработчик события получения нового вопроса"""
 
-    await message.answer('Отправил твой вопрос, ждем ответ ⌛')
+    await message.answer(text='Отправил твой вопрос, ждем ответ ⌛')
 
     if message.text:
         answer = await openai_client.ask(
@@ -71,7 +71,7 @@ async def handle_question_input(
         )
 
     await state.update_data(last_response=answer)
-    await message.reply(answer)
+    await message.reply(text=answer)
 
     await message.answer(
         text=f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
