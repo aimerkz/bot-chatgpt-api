@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .idea/
+.vscode/
 *.py[cod]
 *$py.class
 
@@ -86,4 +87,3 @@ redis_data/
 
 # ruff
 .ruff_cache/
-

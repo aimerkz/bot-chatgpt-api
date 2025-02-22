@@ -6,8 +6,8 @@ from middlewares.logs_middleware.loggers.base import BaseLogger
 
 
 class ProdLogger(BaseLogger):
-    logs_dir: str = 'logs_middleware'
-    log_filename: str = 'logs_middleware.log'
+    logs_dir: str = 'logs'
+    log_filename: str = 'logs.log'
 
     def setup_handler(self):
         os.makedirs(self.logs_dir, exist_ok=True)
@@ -36,4 +36,4 @@ class ProdLogger(BaseLogger):
     def _flip_name(log_path: str) -> str:
         log_dir, log_filename = os.path.split(log_path)
         _, timestamp = log_filename.rsplit('.', 1)
-        return os.path.join(log_dir, f'logs_middleware-{timestamp}.log')
+        return os.path.join(log_dir, f'logs-{timestamp}.log')
