@@ -1,15 +1,15 @@
 name: Pyright
 
 on:
-  push:
-    branches-ignore:
-      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  lint:
-    name: Run pyright check
+  pyright:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
           poetry install --no-root
           echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-      - name: Run pyright
+      - name: Check
         uses: jakebailey/pyright-action@v2
         with:
           project: "./pyproject.toml"
