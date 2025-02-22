@@ -1,15 +1,15 @@
 name: Pytest
 
 on:
-  push:
-    branches-ignore:
-      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  lint:
-    name: Run pytest
+  pytest:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,10 +28,10 @@ jobs:
       - name: Install pytest-md and pytest-emoji
         run: poetry add --group dev pytest-md pytest-emoji
 
-      - name: Run pytest
+      - name: Run tests
         uses: pavelzw/pytest-action@v2
         with:
-          report-title: 'Test Report'
+          report-title: 'Pytest Report'
           click-to-expand: true
           emoji: true
           job-summary: true
