@@ -35,7 +35,6 @@ services:
       timeout: 3s
       retries: 30
 
-
 networks:
   bot-network:
     driver: bridge
