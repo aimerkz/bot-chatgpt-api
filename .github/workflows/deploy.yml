@@ -38,5 +38,6 @@ jobs:
             echo "REDIS_DB=${{ secrets.REDIS_DB }}" >> ./.env
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> ./.env
 
-            docker compose down --rmi all --remove-orphans
+            docker compose down --remove-orphans
+            docker image prune -af -filter "label=bot"
             docker compose up -d --build

@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      labels:
+        bot: "true"
     container_name: 'bot'
     restart: unless-stopped
     networks:
