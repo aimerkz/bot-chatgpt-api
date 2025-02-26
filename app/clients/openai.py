@@ -1,3 +1,4 @@
+import os
 from asyncio import Semaphore
 from typing import TYPE_CHECKING, Optional
 
@@ -27,6 +28,30 @@ class OpenAIClient:
     def __init__(self, client: AsyncOpenAI) -> None:
         self.client = client
         self.semaphore = Semaphore(self.max_requests_to_api)
+
+    @retry_to_gpt_api()
+    async def convert_voice_to_text(
+        self,
+        voice_file_path: str,
+    ) -> Optional[str]:
+        return await self._handle_openai_error(
+            self._convert_voice_to_text,
+            voice_file_path,
+        )
+
+    async def _convert_voice_to_text(
+        self,
+        voice_file_path: str,
+    ) -> Optional[str]:
+        with open(voice_file_path, 'rb') as f:
+            async with self.semaphore:
+                response = await self.client.audio.transcriptions.create(
+                    model='whisper-1',
+                    file=f,
+                    response_format='text',
+                )
+        os.remove(voice_file_path)
+        return response
 
     @retry_to_gpt_api()
     async def ask(

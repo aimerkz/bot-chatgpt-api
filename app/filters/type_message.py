@@ -14,9 +14,9 @@ class TextFilter(BaseFilter):
         return True
 
 
-class TextOrImageFilter(BaseFilter):
+class TextOrImageOrVoiceFilter(BaseFilter):
     async def __call__(self, message: 'Message') -> bool:
-        if not (message.text or message.photo):
-            await message.reply('Отправь либо текст, либо картинку 😠')
+        if not (message.text or message.photo, message.voice):
+            await message.reply('Отправь текст, картинку или голосовое сообщение 😠')
             return False
         return True

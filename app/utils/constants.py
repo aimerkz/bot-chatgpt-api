@@ -1,4 +1,9 @@
+from pathlib import Path
+
 from aiogram import html
+
+DOWNLOAD_VOICE_FILES_DIR = Path(__file__).resolve().parent.parent.parent / 'voices'
+DOWNLOAD_VOICE_FILES_DIR.mkdir(parents=True, exist_ok=True)
 
 help_text = (
     f'{html.italic(html.bold("Доступные действия:"))}\n\n'
