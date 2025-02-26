@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     api_key: SecretStr
     bot_env: BotEnvEnum = BotEnvEnum.DEV
     admin_id: int
+    debug_mode: bool = False
 
     redis_host: str
     redis_port: int

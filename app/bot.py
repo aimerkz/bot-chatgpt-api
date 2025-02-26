@@ -38,4 +38,4 @@ if __name__ == '__main__':
     from contextlib import suppress
 
     with suppress(KeyboardInterrupt):
-        asyncio.run(main())
+        asyncio.run(main(), debug=config.debug_mode)

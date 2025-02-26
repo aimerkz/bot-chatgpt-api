@@ -12,6 +12,7 @@ from exceptions.openai import (
 from keyboards.actions import get_initial_keyboard
 
 if TYPE_CHECKING:
+    from aiogram.fsm.context import FSMContext
     from aiogram.types import Message, TelegramObject
 
 
@@ -31,10 +32,11 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             RateLimitOIException,
             ServerOIException,
         ) as error:
-            await self._handle_exception(event, error)
+            await self._handle_exception(data['state'], event, error)
 
     async def _handle_exception(
         self,
+        state: 'FSMContext',
         event: 'Message',
         exception: Exception,
     ):
@@ -48,10 +50,11 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
 
         error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')
         await event.answer(error_message)
-        await self.return_to_main_menu(event)
+        await self.return_to_main_menu(event, state)
 
     @staticmethod
-    async def return_to_main_menu(event: 'Message') -> None:
+    async def return_to_main_menu(event: 'Message', state: 'FSMContext') -> None:
+        await state.clear()
         await event.answer(
             text='Попробуем начать заново 😊',
             reply_markup=get_initial_keyboard(event),
