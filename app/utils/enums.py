@@ -16,6 +16,7 @@ class BotEnvEnum(str, Enum):
 class MessageTypeEnum(str, Enum):
     TEXT = 'text'
     IMAGE_URL = 'image_url'
+    VOICE = 'voice'
 
 
 class BotStatusEnum(str, Enum):

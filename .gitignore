@@ -87,3 +87,4 @@ redis_data/
 
 # ruff
 .ruff_cache/
+voices/
