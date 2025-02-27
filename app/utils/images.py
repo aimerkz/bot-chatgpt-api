@@ -13,8 +13,8 @@ async def generate_images(
     openai_client: OpenAIClient,
 ):
     image_tasks = [
-        asyncio.create_task(openai_client.generate_image(description, count))
-        for count in range(1, image_count + 1)
+        asyncio.create_task(openai_client.generate_image(description))
+        for _ in range(image_count)
     ]
     done, _ = await asyncio.wait(image_tasks, return_when=asyncio.FIRST_EXCEPTION)
     result = [url.result() for url in done]

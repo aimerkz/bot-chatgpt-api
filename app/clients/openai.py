@@ -111,16 +111,14 @@ class OpenAIClient:
         return assistant_reply
 
     @retry_to_gpt_api()
-    async def generate_image(self, description: str, image_count: int) -> Optional[str]:
-        return await self._handle_openai_error(
-            self._generate_image, description, image_count
-        )
+    async def generate_image(self, description: str) -> Optional[str]:
+        return await self._handle_openai_error(self._generate_image, description)
 
-    async def _generate_image(self, description: str, image_count: int) -> Optional[str]:
+    async def _generate_image(self, description: str) -> Optional[str]:
         async with self.semaphore:
             response = await self.client.images.generate(
                 prompt=description,
-                n=image_count,
+                n=1,
                 size='1024x1024',
                 model='dall-e-2',
                 quality='standard',
