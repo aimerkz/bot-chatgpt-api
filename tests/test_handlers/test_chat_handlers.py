@@ -6,7 +6,7 @@ from aiogram.types import ReplyKeyboardRemove
 
 from handlers.chat.asking import (
     handle_ask_question,
-    handle_handle_exit,
+    handle_exit,
     handle_question_input,
 )
 from keyboards.actions import get_exit_keyboard
@@ -27,7 +27,7 @@ async def test_handle_ask_question(mock_message, mock_fsm):
 
 @pytest.mark.asyncio
 async def test_handle_handle_exit(mock_message, mock_fsm):
-    await handle_handle_exit(mock_message, mock_fsm)
+    await handle_exit(mock_message, mock_fsm)
     mock_fsm.clear.assert_called_once()
     mock_message.answer.assert_called_once_with(
         text='До встречи 👋',
