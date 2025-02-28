@@ -32,7 +32,7 @@ async def handle_ask_question(message: Message, state: FSMContext):
 
 
 @asking_router.message(F.text == ActionsEnum.EXIT)
-async def handle_handle_exit(message: Message, state: FSMContext):
+async def handle_exit(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Выйти'"""
 
     await state.clear()
