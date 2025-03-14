@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
 
-if TYPE_CHECKING:
-    from aiogram.types import TelegramObject, Update
+from utils.types import T
 
+if TYPE_CHECKING:
     from middlewares.logs_middleware.loggers.base import BaseLogger
 
 
@@ -17,8 +17,8 @@ class LoggingMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
-        event: 'Update',
+        handler: Callable[[T, Dict[str, Any]], Awaitable[Any]],
+        event: T,
         data: Dict[str, Any],
     ):
         event_message = event.message

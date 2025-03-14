@@ -1,10 +1,9 @@
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
+from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
 from cachetools import TTLCache
 
-if TYPE_CHECKING:
-    from aiogram.types import Message, TelegramObject
+from utils.types import T
 
 
 class ThrottlingMiddleware(BaseMiddleware):
@@ -13,8 +12,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def __call__(
         self,
-        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
-        event: 'Message',
+        handler: Callable[[T, Dict[str, Any]], Awaitable[Any]],
+        event: T,
         data: Dict[str, Any],
     ) -> Any:
         user_id: int = event.from_user.id

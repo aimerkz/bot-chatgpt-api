@@ -1,6 +1,6 @@
 import os
 from asyncio import Semaphore
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, assert_never
 
 import openai
 from openai import AsyncOpenAI
@@ -12,6 +12,7 @@ from exceptions.openai import (
     RateLimitOIException,
     ServerOIException,
 )
+from models.models import ImageContent, ImageContentItem, ImageUrl, TextContent
 from utils.enums import MessageTypeEnum
 from utils.retry import retry_to_gpt_api
 
@@ -33,7 +34,7 @@ class OpenAIClient:
     async def convert_voice_to_text(
         self,
         voice_file_path: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         return await self._handle_openai_error(
             self._convert_voice_to_text,
             voice_file_path,
@@ -42,7 +43,7 @@ class OpenAIClient:
     async def _convert_voice_to_text(
         self,
         voice_file_path: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         with open(voice_file_path, 'rb') as f:
             async with self.semaphore:
                 response = await self.client.audio.transcriptions.create(
@@ -57,10 +58,10 @@ class OpenAIClient:
     async def ask(
         self,
         state: 'FSMContext',
-        user_text: Optional[str] = None,
-        image_url: Optional[str] = None,
+        user_text: str | None = None,
+        image_url: str | None = None,
         type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
-    ) -> Optional[str]:
+    ) -> str | None:
         return await self._handle_openai_error(
             self._ask,
             user_text,
@@ -71,27 +72,22 @@ class OpenAIClient:
 
     async def _ask(
         self,
-        user_text: Optional[str],
-        image_url: Optional[str],
+        user_text: str | None,
+        image_url: str | None,
         type_message: MessageTypeEnum,
         state: 'FSMContext',
-    ) -> Optional[str]:
+    ) -> str | None:
         conversation_history = await state.get_data()
         conversation_history = conversation_history.get('history', [])
 
-        match type_message:
-            case MessageTypeEnum.TEXT:
-                conversation_history.append(
-                    self._make_content(role='user', user_text=user_text)
-                )
-            case MessageTypeEnum.IMAGE_URL:
-                conversation_history.append(
-                    self._make_content(
-                        role='user',
-                        image_url=image_url,
-                        type_message=MessageTypeEnum.IMAGE_URL,
-                    ),
-                )
+        user_content = self._make_content(
+            role='user',
+            user_text=user_text,
+            image_url=image_url,
+            type_message=type_message,
+        )
+
+        conversation_history.append(user_content.model_dump())
 
         if len(conversation_history) > self.max_history_length:
             conversation_history = conversation_history[-self.max_history_length :]
@@ -103,18 +99,17 @@ class OpenAIClient:
             )
 
         assistant_reply = response.choices[0].message.content
-        conversation_history.append(
-            self._make_content(role='assistant', user_text=assistant_reply)
-        )
+        assistant_content = TextContent(role='assistant', content=assistant_reply)
+        conversation_history.append(assistant_content.model_dump())
 
         await state.update_data(history=conversation_history)
         return assistant_reply
 
     @retry_to_gpt_api()
-    async def generate_image(self, description: str) -> Optional[str]:
+    async def generate_image(self, description: str) -> str | None:
         return await self._handle_openai_error(self._generate_image, description)
 
-    async def _generate_image(self, description: str) -> Optional[str]:
+    async def _generate_image(self, description: str) -> str | None:
         async with self.semaphore:
             response = await self.client.images.generate(
                 prompt=description,
@@ -144,21 +139,24 @@ class OpenAIClient:
     @staticmethod
     def _make_content(
         role: str,
-        user_text: Optional[str] = None,
-        image_url: Optional[str] = None,
+        user_text: str | None = None,
+        image_url: str | None = None,
         type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
-    ) -> dict[str, Optional[str] | list[dict]]:  # type: ignore
+    ) -> TextContent | ImageContent:
         match type_message:
             case MessageTypeEnum.TEXT:
-                return {'role': role, 'content': user_text}
+                return TextContent(role=role, content=user_text)
 
             case MessageTypeEnum.IMAGE_URL:
-                return {
-                    'role': role,
-                    'content': [
-                        {
-                            'type': MessageTypeEnum.IMAGE_URL.value,
-                            'image_url': {'url': image_url},
-                        },
+                return ImageContent(
+                    role=role,
+                    content=[
+                        ImageContentItem(
+                            type=MessageTypeEnum.IMAGE_URL.value,
+                            image_url=ImageUrl(url=image_url),
+                        )
                     ],
-                }
+                )
+
+            case _:
+                assert assert_never(None)
