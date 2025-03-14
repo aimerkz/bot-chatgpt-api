@@ -10,17 +10,18 @@ from exceptions.openai import (
     ServerOIException,
 )
 from keyboards.actions import get_initial_keyboard
+from utils.types import T
 
 if TYPE_CHECKING:
     from aiogram.fsm.context import FSMContext
-    from aiogram.types import Message, TelegramObject
+    from aiogram.types.message import Message
 
 
 class OpenAIExceptionMiddleware(BaseMiddleware):
     async def __call__(
         self,
-        handler: Callable[['TelegramObject', Dict[str, Any]], Awaitable[Any]],
-        event: 'Message',
+        handler: Callable[[T, Dict[str, Any]], Awaitable[Any]],
+        event: T,
         data: dict[str, Any],
     ):
         try:
