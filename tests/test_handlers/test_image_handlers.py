@@ -35,7 +35,7 @@ async def test_handle_image_count_incorrect(mock_message, mock_fsm, image_count)
 
 
 @pytest.mark.asyncio
-@patch('handlers.images.generation.send_generated_image', new_callable=AsyncMock)
+@patch('handlers.images.logic.send_generated_image', new_callable=AsyncMock)
 async def test_handle_image_prompt(
     mock_send_generated_image, mock_message, mock_fsm, mock_openai_client
 ):
