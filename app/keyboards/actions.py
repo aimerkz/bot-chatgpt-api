@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
-from config_reader import config
+from config_reader import settings
 from utils.enums import ActionsEnum
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ def get_initial_keyboard(message: 'Message') -> ReplyKeyboardMarkup:
         ],
     ]
 
-    if message.from_user.id == config.admin_id:
+    if message.from_user.id == settings.admin_id:
         maintenance_button = KeyboardButton(text=ActionsEnum.BOT_MANAGEMENT)
         keyboard[0].append(maintenance_button)
 

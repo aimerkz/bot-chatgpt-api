@@ -1,30 +1,18 @@
 from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.types import LinkPreviewOptions
+from dependency_injector.wiring import Provide, inject
 
-from config_reader import config
+from config_reader import settings
+from containers import Container
 from handlers import setup_routers
 from middlewares import setup_middlewares
-from storage.storage import get_storage
 from utils.set_commands import set_default_commands
 
 
-async def main() -> None:
-    bot = Bot(
-        token=config.bot_token.get_secret_value(),
-        default=DefaultBotProperties(
-            parse_mode=ParseMode.HTML,
-            link_preview=LinkPreviewOptions(
-                is_disabled=False,
-                prefer_small_media=True,
-            ),
-        ),
-    )
-
-    storage = get_storage()
-
-    dp = Dispatcher(storage=storage, bot=bot)
+@inject
+async def main(
+    bot: Bot = Provide[Container.bot],
+    dp: Dispatcher = Provide[Container.dp],
+) -> None:
     setup_routers(dp)
     setup_middlewares(dp)
 
@@ -37,5 +25,8 @@ if __name__ == '__main__':
     import asyncio
     from contextlib import suppress
 
+    container = Container()
+    container.wire(modules=[__name__])
+
     with suppress(KeyboardInterrupt):
-        asyncio.run(main(), debug=config.debug_mode)
+        asyncio.run(main(), debug=settings.debug_mode)
