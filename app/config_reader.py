@@ -28,4 +28,4 @@ class Settings(BaseSettings):
         return f'redis://:{password}@{self.redis_host}:{self.redis_port}/{self.redis_db}'
 
 
-config = Settings()  # type: ignore
+settings = Settings()  # type: ignore

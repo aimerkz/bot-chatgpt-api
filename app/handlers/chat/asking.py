@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from config_reader import config
+from config_reader import settings
 from filters.type_message import TextOrImageOrVoiceFilter
 from handlers.chat import logic
 from keyboards.actions import get_exit_keyboard
@@ -15,7 +15,7 @@ from utils.enums import ActionsEnum
 
 asking_router = Router(name=__name__)
 
-asking_router.message.middleware(OpenAIMiddleware(config.api_key.get_secret_value()))
+asking_router.message.middleware(OpenAIMiddleware(settings.api_key.get_secret_value()))
 asking_router.message.middleware(OpenAIExceptionMiddleware())
 
 
