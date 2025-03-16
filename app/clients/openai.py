@@ -159,4 +159,4 @@ class OpenAIClient:
                 )
 
             case _:
-                assert assert_never(None)
+                assert_never(None)

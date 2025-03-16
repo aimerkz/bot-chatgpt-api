@@ -77,7 +77,7 @@ exclude = ["**/tests"]
 
 reportUnknownArgumentType = "none"
 reportMissingImports = "error"
-reportMissingTypeStubs = "none"
+reportMissingTypeStubs = "error"
 reportOptionalMemberAccess = "none"
 reportOptionalSubscript = "none"
 reportAttributeAccessIssue = "none"
