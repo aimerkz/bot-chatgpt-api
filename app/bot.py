@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher
 from dependency_injector.wiring import Provide, inject
 
 from config_reader import settings
-from containers import Container
+from containers import BotAppContainer
 from handlers import setup_routers
 from middlewares import setup_middlewares
 from utils.set_commands import set_default_commands
@@ -10,8 +10,8 @@ from utils.set_commands import set_default_commands
 
 @inject
 async def main(
-    bot: Bot = Provide[Container.bot],
-    dp: Dispatcher = Provide[Container.dp],
+    bot: Bot = Provide[BotAppContainer.bot.bot],
+    dp: Dispatcher = Provide[BotAppContainer.dp.dp],
 ) -> None:
     setup_routers(dp)
     setup_middlewares(dp)
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     import asyncio
     from contextlib import suppress
 
-    container = Container()
+    container = BotAppContainer()
     container.wire(modules=[__name__])
 
     with suppress(KeyboardInterrupt):
