@@ -18,4 +18,4 @@ class LoggerContainer(containers.DeclarativeContainer):
 
 class LoggingMiddlewareContainer(containers.DeclarativeContainer):
     logger = providers.Container(LoggerContainer)
-    middleware = providers.Singleton(LoggingMiddleware, logger=logger.container.logger)
+    middleware = providers.Singleton(LoggingMiddleware, logger=logger.logger)

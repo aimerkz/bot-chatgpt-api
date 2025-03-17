@@ -5,12 +5,10 @@ from aiogram.types import LinkPreviewOptions
 from dependency_injector import containers, providers
 
 from config_reader import settings
-from storage.storage import get_storage
+from storage.container import StorageContainer
 
 
-class Container(containers.DeclarativeContainer):
-    config = providers.Configuration()
-
+class BotInstanceContainer(containers.DeclarativeContainer):
     bot = providers.Singleton(
         Bot,
         token=settings.bot_token.get_secret_value(),
@@ -23,10 +21,17 @@ class Container(containers.DeclarativeContainer):
         ),
     )
 
-    storage = providers.Singleton(get_storage)
 
+class DispatcherContainer(containers.DeclarativeContainer):
+    storage = providers.Container(StorageContainer)
+    bot = providers.Container(BotInstanceContainer)
     dp = providers.Singleton(
         Dispatcher,
-        storage=storage,
+        storage=storage.storage_factory,
         bot=bot,
     )
+
+
+class BotAppContainer(containers.DeclarativeContainer):
+    bot = providers.Container(BotInstanceContainer)
+    dp = providers.Container(DispatcherContainer)

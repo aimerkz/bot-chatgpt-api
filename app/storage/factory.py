@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from aiogram.fsm.storage.base import BaseStorage
 
 
-def get_storage() -> 'BaseStorage':
+def storage_factory() -> 'BaseStorage':
     match settings.bot_env:
         case BotEnvEnum.DEV:
             return MemoryStorage()
