@@ -1,18 +1,11 @@
 from aiogram import Dispatcher
-from aiogram.utils.chat_action import ChatActionMiddleware
 
-from config_reader import settings
-from middlewares.logs_middleware.loggers.factory import LoggerFactory
-from middlewares.logs_middleware.main_middleware import LoggingMiddleware
-from middlewares.throttling import ThrottlingMiddleware
+from middlewares.containers import MiddlewaresContainer
 
 
 def setup_middlewares(dp: Dispatcher) -> Dispatcher:
-    dp.update.middleware(
-        LoggingMiddleware(
-            LoggerFactory().get_logger(settings.bot_env),
-        ),
-    )
-    dp.message.middleware(ThrottlingMiddleware())
-    dp.message.middleware(ChatActionMiddleware())
+    middlewares_container = MiddlewaresContainer()
+    dp.update.middleware(middlewares_container.logging_middleware())
+    dp.message.middleware(middlewares_container.throttling_middleware())
+    dp.message.middleware(middlewares_container.chat_action_middleware())
     return dp
