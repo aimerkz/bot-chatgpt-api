@@ -4,19 +4,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from clients.openai import OpenAIClient
-from config_reader import settings
 from filters.type_message import TextFilter
 from handlers.images import logic
-from middlewares.exceptions import OpenAIExceptionMiddleware
-from middlewares.openai_client import OpenAIMiddleware
 from states.state import ImageState
 
 generation_router = Router(name=__name__)
-
-generation_router.message.middleware(
-    OpenAIMiddleware(settings.api_key.get_secret_value())
-)
-generation_router.message.middleware(OpenAIExceptionMiddleware())
 
 
 @generation_router.message(

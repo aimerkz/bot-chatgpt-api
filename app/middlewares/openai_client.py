@@ -1,19 +1,16 @@
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
-from openai import AsyncOpenAI
-
-from clients.openai import OpenAIClient
 
 if TYPE_CHECKING:
     from aiogram.types import TelegramObject
 
+    from clients.openai import OpenAIClient
+
 
 class OpenAIMiddleware(BaseMiddleware):
-    def __init__(self, api_key: str) -> None:
-        self.client = OpenAIClient(
-            AsyncOpenAI(api_key=api_key, base_url='https://api.openai.com/v1'),
-        )
+    def __init__(self, openai_client: 'OpenAIClient') -> None:
+        self.client = openai_client
 
     async def __call__(
         self,

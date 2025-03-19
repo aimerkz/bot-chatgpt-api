@@ -9,12 +9,10 @@ if TYPE_CHECKING:
 
 
 class LoggerFactory:
-    def __init__(self, bot_env: BotEnvEnum = BotEnvEnum.DEV) -> None:
-        self.bot_env = bot_env
-
-    def get_logger(self) -> 'BaseLogger':
+    @staticmethod
+    def get_logger(bot_env: BotEnvEnum = BotEnvEnum.DEV) -> 'BaseLogger':
         loggers = {
             BotEnvEnum.DEV: DevLogger,
             BotEnvEnum.PROD: ProdLogger,
         }
-        return loggers[self.bot_env]()
+        return loggers[bot_env]()
