@@ -6,6 +6,7 @@ import openai
 from openai import AsyncOpenAI
 
 from exceptions.openai import (
+    AuthenticationOIException,
     BadRequestOIException,
     NotFoundOIException,
     PermissionOIException,
@@ -135,6 +136,8 @@ class OpenAIClient:
             raise RateLimitOIException(error.message, error.status_code)
         except openai.InternalServerError as error:
             raise ServerOIException(error.message, error.status_code)
+        except openai.AuthenticationError as error:
+            raise AuthenticationOIException(error.message, error.status_code)
 
     @staticmethod
     def _make_content(

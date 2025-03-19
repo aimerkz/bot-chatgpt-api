@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 from aiogram import BaseMiddleware
 
 from exceptions.openai import (
+    AuthenticationOIException,
     BadRequestOIException,
     NotFoundOIException,
     PermissionOIException,
@@ -32,6 +33,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             BadRequestOIException,
             RateLimitOIException,
             ServerOIException,
+            AuthenticationOIException,
         ) as error:
             await self._handle_exception(data['state'], event, error)
 
@@ -47,6 +49,7 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
             BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
             RateLimitOIException: '😱 Слишком много запросов к ChatGPT',
             ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
+            AuthenticationOIException: 'Не получилось авторизоваться :(',
         }
 
         error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')
