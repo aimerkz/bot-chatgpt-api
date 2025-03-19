@@ -24,7 +24,7 @@ class MiddlewaresContainer(containers.DeclarativeContainer):
         OpenAIClient,
         client=providers.Object(
             AsyncOpenAI(
-                api_key=settings.api_key,
+                api_key=settings.api_key.get_secret_value(),
                 base_url='https://api.openai.com/v1',
             ),
         ),

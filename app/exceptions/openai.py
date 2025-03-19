@@ -19,3 +19,7 @@ class RateLimitOIException(BaseInternalException):
 
 class ServerOIException(BaseInternalException):
     pass
+
+
+class AuthenticationOIException(BaseInternalException):
+    pass
