@@ -29,6 +29,10 @@ jobs:
               cd bot-chatgpt-api/ && git pull origin master
             fi
             
+            if [ -f ./.env ]; then
+              rm ./.env
+            fi
+            
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> ./.env
             echo "API_KEY=${{ secrets.API_KEY }}" >> ./.env
             echo "BOT_ENV=${{ secrets.BOT_ENV }}" >> ./.env
@@ -38,6 +42,6 @@ jobs:
             echo "REDIS_DB=${{ secrets.REDIS_DB }}" >> ./.env
             echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> ./.env
 
-            docker compose down --remove-orphans
+            docker compose stop
             docker image prune -af --filter "label=bot"
             docker compose up -d --build
