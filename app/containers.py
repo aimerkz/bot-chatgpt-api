@@ -5,7 +5,7 @@ from aiogram.types import LinkPreviewOptions
 from dependency_injector import containers, providers
 
 from config_reader import settings
-from storage.container import StorageContainer
+from storage.containers import StorageContainer
 
 
 class BotInstanceContainer(containers.DeclarativeContainer):
