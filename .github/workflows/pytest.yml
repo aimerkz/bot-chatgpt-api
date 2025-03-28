@@ -19,14 +19,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Set up poetry
+      - name: Set up uv
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          poetry install --no-root
-          echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+          curl -LsSf https://astral.sh/uv/install.sh | sh -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install pytest-md and pytest-emoji
-        run: poetry add --group dev pytest-md pytest-emoji
+        run: uv add --dev pytest-md pytest-emoji && echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
       - name: Run tests
         uses: pavelzw/pytest-action@v2

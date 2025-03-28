@@ -88,3 +88,5 @@ redis_data/
 # ruff
 .ruff_cache/
 voices/
+
+.python-version
