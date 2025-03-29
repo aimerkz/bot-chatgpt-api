@@ -4,18 +4,17 @@ ARG APP_DIR=/src
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
     APP_PATH=$APP_DIR \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_LINK_MODE=copy \
     PATH=$APP_DIR/.venv/bin:/root/.local/bin:$PATH
 
 WORKDIR $APP_DIR
-COPY pyproject.toml poetry.lock $APP_DIR
+COPY pyproject.toml uv.lock $APP_DIR
 
 RUN apk add --no-cache curl \
-    && curl -sSL https://install.python-poetry.org | python3 - \
-    && poetry install --no-root --without dev
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && uv sync --no-dev --no-install-project -n -q
 
 COPY . $APP_DIR
-CMD ["poetry", "run", "python3", "app/bot.py"]
+CMD ["uv", "run", "app/bot.py"]
