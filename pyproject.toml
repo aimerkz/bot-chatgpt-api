@@ -20,6 +20,7 @@ dev = [
     "pytest>=8.3.4,<9",
     "pytest-asyncio>=0.25.3,<0.26",
     "pytest-env>=1.1.5,<2",
+    "faker>=37.1.0",
 ]
 
 [build-system]
@@ -100,10 +101,10 @@ testpaths = ["tests"]
 console_output_style = "progress"
 asyncio_mode = "auto"
 addopts = "-ra"
-asyncio_default_fixture_loop_scope = "function"
+asyncio_default_fixture_loop_scope = "session"
 log_cli = false
 env = [
-    "BOT_TOKEN=token",
+    "BOT_TOKEN=1234567890:FAKE_TOKEN_1234567890",
     "API_KEY=api_key",
     "BOT_ENV=dev",
     "ADMIN_ID=666",

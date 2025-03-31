@@ -1,15 +1,14 @@
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from aiogram import html
 from aiogram.types import ReplyKeyboardRemove
+from tests.unit_tests.logic import assert_common_calls
 
 from handlers.chat.asking import (
     handle_ask_question,
     handle_exit,
     handle_question_input,
 )
-from keyboards.actions import get_exit_keyboard
 from states.state import DialogState
 from utils.constants import DOWNLOAD_VOICE_FILES_DIR
 from utils.enums import MessageTypeEnum
@@ -111,17 +110,3 @@ async def test_handle_question_voice_input(
         type_message=MessageTypeEnum.TEXT,
     )
     assert_common_calls(mock_message, mock_fsm, mock_openai_client.ask.return_value)
-
-
-def assert_common_calls(mock_message, mock_fsm, expected_response):
-    mock_fsm.update_data.assert_called_once_with(last_response=expected_response)
-
-    expected_calls = [
-        call(text='Отправил твой вопрос, ждем ответ ⌛'),
-        call(
-            text=f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
-            reply_markup=get_exit_keyboard(),
-        ),
-    ]
-    mock_message.answer.assert_has_calls(expected_calls, any_order=False)
-    mock_message.reply.assert_called_once_with(text=expected_response)
