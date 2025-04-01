@@ -8,11 +8,11 @@ from handlers.service import setup_service_routers
 
 
 def setup_routers(dp: Dispatcher) -> Dispatcher:
-	dp.include_routers(
-		setup_service_routers(),
-		setup_commands_routers(),
-		setup_asking_routers(),
-		setup_image_routers(),
-		setup_others_routers(),
-	)
-	return dp
+    dp.include_routers(
+        setup_service_routers(),
+        setup_commands_routers(),
+        setup_asking_routers(),
+        setup_image_routers(),
+        setup_others_routers(),
+    )
+    return dp
