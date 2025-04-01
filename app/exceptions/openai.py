@@ -2,24 +2,24 @@ from exceptions.base import BaseInternalException
 
 
 class PermissionOIException(BaseInternalException):
-	pass
+    pass
 
 
 class BadRequestOIException(BaseInternalException):
-	pass
+    pass
 
 
 class NotFoundOIException(BaseInternalException):
-	pass
+    pass
 
 
 class RateLimitOIException(BaseInternalException):
-	pass
+    pass
 
 
 class ServerOIException(BaseInternalException):
-	pass
+    pass
 
 
 class AuthenticationOIException(BaseInternalException):
-	pass
+    pass

@@ -4,4 +4,4 @@ from storage.factory import storage_factory
 
 
 class StorageContainer(containers.DeclarativeContainer):
-	storage_factory = providers.Factory(storage_factory)
+    storage_factory = providers.Factory(storage_factory)
