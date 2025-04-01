@@ -9,7 +9,7 @@ other_router = Router(name=__name__)
 
 @other_router.message(StateFilter(None))
 async def handle_unexpected_input(message: Message):
-    await message.reply(
-        text='Сначала выбери действие с помощью кнопок 👇',
-        reply_markup=get_initial_keyboard(message),
-    )
+	await message.reply(
+		text='Сначала выбери действие с помощью кнопок 👇',
+		reply_markup=get_initial_keyboard(message),
+	)

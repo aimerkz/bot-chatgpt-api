@@ -2,13 +2,13 @@ from aiogram.fsm.state import State, StatesGroup
 
 
 class DialogState(StatesGroup):
-    active = State()
+	active = State()
 
 
 class ImageState(StatesGroup):
-    count_images = State()
-    to_generate = State()
+	count_images = State()
+	to_generate = State()
 
 
 class BotManagementState(StatesGroup):
-    manage = State()
+	manage = State()

@@ -5,7 +5,7 @@ from middlewares.logs_middleware.loggers.factory import LoggerFactory
 
 
 class LoggerContainer(containers.DeclarativeContainer):
-    logger = providers.Singleton(
-        LoggerFactory.get_logger,
-        bot_env=settings.bot_env,
-    )
+	logger = providers.Singleton(
+		LoggerFactory.get_logger,
+		bot_env=settings.bot_env,
+	)
