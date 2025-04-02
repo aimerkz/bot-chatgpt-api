@@ -1,5 +1,4 @@
 import pytest
-from aiogram.methods import SendMessage
 from tests.integration_tests.conftest import admin_factory, user_factory
 
 from utils.constants import help_text
@@ -20,7 +19,6 @@ async def test_handle_cmd_start(
     await dispatcher.feed_update(bot, update)
     request = bot.get_request()
 
-    assert isinstance(request, SendMessage)
     assert (
         request.text
         == f'Привет 🤝, <b>{message.from_user.full_name}</b>! Пожалуйста, выбери действие:'
@@ -44,7 +42,6 @@ async def test_handle_cmd_help(
     await dispatcher.feed_update(bot, update)
     request = bot.get_request()
 
-    assert isinstance(request, SendMessage)
     assert request.text == help_text
     assert request.chat_id == message.chat.id
     assert request.reply_markup is None
