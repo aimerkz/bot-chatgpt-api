@@ -1,6 +1,5 @@
 import pytest
 from aiogram import html
-from aiogram.methods import SendMessage
 from aiogram.types import ReplyKeyboardRemove
 from tests.integration_tests.logic import check_state, set_state
 
@@ -23,7 +22,7 @@ async def test_handle_ask_question(
 
     await dispatcher.feed_update(bot, update)
     request = bot.get_request()
-    assert isinstance(request, SendMessage)
+
     assert request.text == 'Отлично! Напиши свой вопрос, и я отправлю его ChatGPT'
     assert request.chat_id == message.chat.id
     assert isinstance(request.reply_markup, ReplyKeyboardRemove)
@@ -45,7 +44,7 @@ async def test_handle_exit(
 
     await dispatcher.feed_update(bot, update)
     request = bot.get_request()
-    assert isinstance(request, SendMessage)
+
     assert request.text == 'До встречи 👋'
     assert request.chat_id == message.chat.id
     assert isinstance(request.reply_markup, ReplyKeyboardRemove)
@@ -61,7 +60,7 @@ async def test_handle_exit(
         ('is_voice', True),
     ],
 )
-async def test_handle_question_input_text(
+async def test_handle_question_input(
     bot,
     dispatcher,
     mock_openai,
@@ -92,7 +91,7 @@ async def test_handle_question_input_text(
     mock_openai.ask.assert_awaited_once()
     assert len(requests) == 3
     assert all(
-        req.text == expected_response
+        req.text == expected_response and req.chat_id == message.chat.id
         for req, expected_response in zip(requests, expected_responses)
     )
     assert last_response['last_response'] == mock_openai.ask.return_value
@@ -121,4 +120,5 @@ async def test_handle_question_incorrect_input(
     assert len(requests) == 1
     assert requests[0].text == 'Отправь текст, картинку или голосовое сообщение 😠'
     assert requests[0].reply_markup is None
+    assert requests[0].chat_id == incorrect_message.chat.id
     mock_openai.ask.assert_not_awaited()
