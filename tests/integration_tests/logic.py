@@ -8,7 +8,7 @@ async def set_state(fsm_context_factory, message, state_value: StatesGroup | Non
 
 
 async def check_state(
-    fsm_context_factory, message, target_state_value: StatesGroup | None
+    fsm_context_factory, message, target_state_value: str | None
 ) -> None:
     fsm = await fsm_context_factory(message.chat.id, message.from_user.id)
     state = await fsm.get_state()

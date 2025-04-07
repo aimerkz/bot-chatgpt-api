@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-from typing import TYPE_CHECKING, cast
 from unittest.mock import AsyncMock
 
 import pytest
@@ -8,17 +7,14 @@ from aiogram import Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.methods import SendMessage
-from aiogram.types import Chat, Message, PhotoSize, Story, Update, User, Voice
+from aiogram.types import Chat, Message, PhotoSize, Update, User, Voice
 from faker import Faker
 from openai import AsyncOpenAI
-from tests.integration_tests.mocked_bot import MockedBot
 
 from clients.openai import OpenAIClient
 from handlers import setup_routers
 from storage.factory import storage_factory
-
-if TYPE_CHECKING:
-    from _pytest.fixtures import FixtureRequest
+from tests.integration_tests.mocked_bot import MockedBot
 
 fake = Faker()
 
@@ -64,25 +60,18 @@ async def fsm_context_factory(bot, storage):
 
 
 @pytest.fixture(scope='session')
-async def async_openai_client(request: 'FixtureRequest') -> AsyncOpenAI:
-    strict = getattr(request, 'param', True)
-    if not isinstance(strict, bool):
-        raise TypeError(
-            f'Unexpected fixture parameter type {type(strict)}, expected {bool}'
-        )
-
+async def async_openai_client() -> AsyncOpenAI:
     async with AsyncOpenAI(
         base_url='http://127.0.0.1:4010',
         api_key=os.getenv('API_KEY'),
-        _strict_response_validation=strict,
     ) as client:
-        return client
+        yield client
 
 
 @pytest.fixture(scope='session')
 async def openai_client(async_openai_client) -> OpenAIClient:
     client = OpenAIClient(client=async_openai_client)
-    return client
+    yield client
 
 
 @pytest.fixture
@@ -123,81 +112,23 @@ def chat_factory() -> Chat:
 
 
 @pytest.fixture
-def photo_size() -> list[PhotoSize]:
-    return [
-        PhotoSize(
-            file_id=fake.pystr(1, 5),
-            file_size=fake.random_int(100, 1000),
-            file_unique_id=fake.pystr(1, 5),
-            width=fake.random_int(500, 1000),
-            height=fake.random_int(500, 1000),
-        )
-    ]
-
-
-@pytest.fixture
-def voice() -> Voice:
-    return Voice(
-        file_id=fake.pystr(1, 5),
-        file_size=fake.random_int(100, 1000),
-        file_unique_id=fake.pystr(1, 5),
-        duration=fake.random_int(2, 5),
-    )
-
-
-@pytest.fixture
-def story(chat_factory) -> Story:
-    return Story(
-        chat=chat_factory,
-        id=fake.random_int(1, 10),
-    )
-
-
-@pytest.fixture(autouse=True)
-async def mock_image_url(mocker):
-    return mocker.patch(
-        'handlers.chat.logic.get_image_url',
-        new_callable=AsyncMock,
-        return_value='https://127.0.0.1/image',
-    )
-
-
-@pytest.fixture(autouse=True)
-async def mock_download_voice_file(mocker):
-    return mocker.patch(
-        'handlers.chat.logic.download_voice_file',
-        new_callable=AsyncMock,
-        return_value='/voices_dir/',
-    )
-
-
-@pytest.fixture
-def message_factory(user_factory, chat_factory, photo_size, voice):
+def base_message_factory(user_factory, chat_factory):
     def factory(
-        text: str | None = None, is_photo: bool = False, is_voice: bool = False
+        text: str | None = None,
+        photo_size: PhotoSize | None = None,
+        voice: Voice | None = None,
     ) -> Message:
         return Message(
             message_id=fake.random_int(1, 10),
             from_user=user_factory,
             chat=chat_factory,
             text=text,
+            photo=photo_size,
+            voice=voice,
             date=datetime.now(),
-            photo=photo_size if is_photo else None,
-            voice=voice if is_voice else None,
         )
 
     return factory
-
-
-@pytest.fixture
-def incorrect_message(user_factory, chat_factory, story):
-    return Message(
-        message_id=fake.random_int(1, 10),
-        from_user=user_factory,
-        chat=chat_factory,
-        date=datetime.now(),
-        story=story,
-    )
 
 
 @pytest.fixture
@@ -224,15 +155,3 @@ def sent_message_factory(bot: MockedBot):
             )
 
     return factory
-
-
-@pytest.fixture(scope='session')
-def admin_factory() -> User:
-    admin = User(
-        id=cast(int, os.getenv('ADMIN_ID')),
-        first_name=fake.first_name(),
-        last_name=fake.last_name(),
-        is_bot=False,
-        username=fake.user_name(),
-    )
-    return admin

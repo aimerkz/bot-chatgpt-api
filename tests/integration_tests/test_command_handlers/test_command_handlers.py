@@ -1,15 +1,16 @@
 import pytest
-from tests.integration_tests.conftest import admin_factory, user_factory
 
+from tests.integration_tests.conftest import user_factory
+from tests.integration_tests.test_command_handlers.conftest import admin_factory
 from utils.constants import help_text
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('user', (user_factory, admin_factory))
 async def test_handle_cmd_start(
-    bot, dispatcher, message_factory, update_factory, sent_message_factory, user
+    bot, dispatcher, base_message_factory, update_factory, sent_message_factory, user
 ):
-    message = message_factory('/start')
+    message = base_message_factory('/start')
     update = update_factory(message)
     sent_message_factory(
         message,
@@ -31,11 +32,11 @@ async def test_handle_cmd_start(
 async def test_handle_cmd_help(
     bot,
     dispatcher,
-    message_factory,
+    base_message_factory,
     update_factory,
     sent_message_factory,
 ):
-    message = message_factory('/help')
+    message = base_message_factory('/help')
     update = update_factory(message)
     sent_message_factory(message, help_text)
 

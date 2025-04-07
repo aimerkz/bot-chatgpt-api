@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def storage_factory() -> 'BaseStorage':
     match settings.bot_env:
-        case BotEnvEnum.DEV:
+        case BotEnvEnum.DEV | BotEnvEnum.TEST:
             return MemoryStorage()
         case BotEnvEnum.PROD:
             return RedisStorage.from_url(
