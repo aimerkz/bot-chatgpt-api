@@ -1,9 +1,10 @@
 import pytest
 from aiogram import html
 from aiogram.types import ReplyKeyboardRemove
-from tests.integration_tests.logic import check_state, set_state
 
 from states.state import DialogState
+from tests.integration_tests.logic import check_state, set_state
+from tests.integration_tests.test_chat_handlers.logic import assert_response
 from utils.enums import ActionsEnum
 
 
@@ -11,12 +12,12 @@ from utils.enums import ActionsEnum
 async def test_handle_ask_question(
     bot,
     dispatcher,
-    message_factory,
+    base_message_factory,
     update_factory,
     sent_message_factory,
     fsm_context_factory,
 ):
-    message = message_factory(ActionsEnum.ASK)
+    message = base_message_factory(ActionsEnum.ASK)
     update = update_factory(message)
     sent_message_factory(message, 'Отлично! Напиши свой вопрос, и я отправлю его ChatGPT')
 
@@ -33,12 +34,12 @@ async def test_handle_ask_question(
 async def test_handle_exit(
     bot,
     dispatcher,
-    message_factory,
+    base_message_factory,
     update_factory,
     sent_message_factory,
     fsm_context_factory,
 ):
-    message = message_factory(ActionsEnum.EXIT)
+    message = base_message_factory(ActionsEnum.EXIT)
     update = update_factory(message)
     sent_message_factory(message, 'До встречи 👋')
 
@@ -52,26 +53,16 @@ async def test_handle_exit(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    'content_type, content',
-    [
-        ('text', 'Test question'),
-        ('is_photo', True),
-        ('is_voice', True),
-    ],
-)
-async def test_handle_question_input(
+async def test_handle_question_text_input(
     bot,
     dispatcher,
     mock_openai,
     fsm_context_factory,
-    message_factory,
     update_factory,
     sent_message_factory,
-    content_type,
-    content,
+    base_message_factory,
 ):
-    message = message_factory(**{content_type: content})
+    message = base_message_factory('test_text')
     update = update_factory(message)
     dispatcher['openai_client'] = mock_openai
 
@@ -85,17 +76,61 @@ async def test_handle_question_input(
     sent_message_factory(message, *expected_responses)
 
     await dispatcher.feed_update(bot, update)
-    requests = bot.get_requests()
-    last_response = await fsm.get_data()
+    await assert_response(bot, fsm, mock_openai, message, expected_responses)
 
-    mock_openai.ask.assert_awaited_once()
-    assert len(requests) == 3
-    assert all(
-        req.text == expected_response and req.chat_id == message.chat.id
-        for req, expected_response in zip(requests, expected_responses)
-    )
-    assert last_response['last_response'] == mock_openai.ask.return_value
-    assert len(requests[-1].reply_markup.keyboard[0]) == 1
+
+@pytest.mark.asyncio
+async def test_handle_question_image_input(
+    bot,
+    dispatcher,
+    mock_openai,
+    fsm_context_factory,
+    update_factory,
+    sent_message_factory,
+    photo_message_factory,
+):
+    message = photo_message_factory()
+    update = update_factory(message)
+    dispatcher['openai_client'] = mock_openai
+
+    fsm = await set_state(fsm_context_factory, message, DialogState.active)
+    expected_responses = [
+        'Отправил твой вопрос, ждем ответ ⌛',
+        mock_openai.ask.return_value,
+        f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+    ]
+
+    sent_message_factory(message, *expected_responses)
+
+    await dispatcher.feed_update(bot, update)
+    await assert_response(bot, fsm, mock_openai, message, expected_responses)
+
+
+@pytest.mark.asyncio
+async def test_handle_question_voice_input(
+    bot,
+    dispatcher,
+    mock_openai,
+    fsm_context_factory,
+    update_factory,
+    sent_message_factory,
+    voice_message_factory,
+):
+    message = voice_message_factory()
+    update = update_factory(message)
+    dispatcher['openai_client'] = mock_openai
+
+    fsm = await set_state(fsm_context_factory, message, DialogState.active)
+    expected_responses = [
+        'Отправил твой вопрос, ждем ответ ⌛',
+        mock_openai.ask.return_value,
+        f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+    ]
+
+    sent_message_factory(message, *expected_responses)
+
+    await dispatcher.feed_update(bot, update)
+    await assert_response(bot, fsm, mock_openai, message, expected_responses)
 
 
 @pytest.mark.asyncio

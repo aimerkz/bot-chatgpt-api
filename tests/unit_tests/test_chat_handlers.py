@@ -2,7 +2,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from aiogram.types import ReplyKeyboardRemove
-from tests.unit_tests.logic import assert_common_calls
 
 from handlers.chat.asking import (
     handle_ask_question,
@@ -10,6 +9,7 @@ from handlers.chat.asking import (
     handle_question_input,
 )
 from states.state import DialogState
+from tests.unit_tests.logic import assert_common_calls
 from utils.constants import DOWNLOAD_VOICE_FILES_DIR
 from utils.enums import MessageTypeEnum
 

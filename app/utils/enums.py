@@ -11,6 +11,7 @@ class ActionsEnum(str, Enum):
 class BotEnvEnum(str, Enum):
     DEV = 'dev'
     PROD = 'prod'
+    TEST = 'test'
 
 
 class MessageTypeEnum(str, Enum):
