@@ -15,7 +15,6 @@ from exceptions.openai import (
 )
 from models.models import ImageContent, ImageContentItem, ImageUrl, TextContent
 from utils.enums import MessageTypeEnum
-from utils.retry import retry_to_gpt_api
 
 if TYPE_CHECKING:
     from aiogram.fsm.context import FSMContext
@@ -31,7 +30,6 @@ class OpenAIClient:
         self.client = client
         self.semaphore = Semaphore(self.max_requests_to_api)
 
-    @retry_to_gpt_api()
     async def convert_voice_to_text(
         self,
         voice_file_path: str,
@@ -55,7 +53,6 @@ class OpenAIClient:
         os.remove(voice_file_path)
         return response
 
-    @retry_to_gpt_api()
     async def ask(
         self,
         state: 'FSMContext',
@@ -106,7 +103,6 @@ class OpenAIClient:
         await state.update_data(history=conversation_history)
         return assistant_reply
 
-    @retry_to_gpt_api()
     async def generate_image(self, description: str) -> str | None:
         return await self._handle_openai_error(self._generate_image, description)
 
