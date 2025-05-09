@@ -2,14 +2,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
 
-from exceptions.openai import (
-    AuthenticationOIException,
-    BadRequestOIException,
-    NotFoundOIException,
-    PermissionOIException,
-    RateLimitOIException,
-    ServerOIException,
-)
+from exceptions import openai as openai_exceptions
 from keyboards.actions import get_initial_keyboard
 from utils.types import T
 
@@ -28,12 +21,13 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
         try:
             await handler(event, data)
         except (
-            PermissionOIException,
-            NotFoundOIException,
-            BadRequestOIException,
-            RateLimitOIException,
-            ServerOIException,
-            AuthenticationOIException,
+            openai_exceptions.PermissionOIException,
+            openai_exceptions.NotFoundOIException,
+            openai_exceptions.BadRequestOIException,
+            openai_exceptions.RateLimitOIException,
+            openai_exceptions.ServerOIException,
+            openai_exceptions.AuthenticationOIException,
+            openai_exceptions.TimedOutOIException,
         ) as error:
             await self._handle_exception(data['state'], event, error)
 
@@ -44,15 +38,16 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
         exception: Exception,
     ):
         error_messages = {
-            PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API',
-            NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
-            BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
-            RateLimitOIException: '😱 Слишком много запросов к ChatGPT',
-            ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
-            AuthenticationOIException: 'Не получилось авторизоваться :(',
+            openai_exceptions.PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API',
+            openai_exceptions.NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
+            openai_exceptions.BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
+            openai_exceptions.RateLimitOIException: '😱 Слишком много запросов к ChatGPT',
+            openai_exceptions.ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
+            openai_exceptions.AuthenticationOIException: 'Не получилось авторизоваться :(',
+            openai_exceptions.TimedOutOIException: 'Превышено время ожидания ответа от ChatGPT :(',
         }
 
-        error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')
+        error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')  # type: ignore
         await event.answer(error_message)
         await self.return_to_main_menu(event, state)
 

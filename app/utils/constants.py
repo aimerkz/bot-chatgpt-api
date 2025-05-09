@@ -13,3 +13,12 @@ help_text = (
     f'{html.bold("Активируй бота командной /start, чтобы продолжить!")}\n\n'
     f'{html.spoiler(html.link("Код бота на GitHub", "https://github.com/aimerkz/bot-chatgpt-api"))}'
 )
+
+GPT_MODEL: str = 'gpt-4o-mini'
+GPT_IMAGE_MODEL: str = 'dall-e-2'
+GPT_AUDIO_MODEL: str = 'whisper-1'
+
+TIMEOUT: float = 30.0
+IMAGE_SIZE: str = '1024x1024'
+MAX_REQUESTS_TO_GPT_API: int = 5
+MAX_HISTORY_LENGTH: int = 10
