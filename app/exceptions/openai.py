@@ -23,3 +23,7 @@ class ServerOIException(BaseInternalException):
 
 class AuthenticationOIException(BaseInternalException):
     pass
+
+
+class TimedOutOIException(BaseInternalException):
+    pass

@@ -1,5 +1,3 @@
-from typing import Literal
-
 from pydantic import BaseModel
 
 
@@ -13,7 +11,7 @@ class ImageUrl(BaseModel):
 
 
 class ImageContentItem(BaseModel):
-    type: Literal['image_url']
+    type: str
     image_url: ImageUrl
 
 

@@ -5,26 +5,19 @@ from typing import TYPE_CHECKING, assert_never
 import openai
 from openai import AsyncOpenAI
 
-from exceptions.openai import (
-    AuthenticationOIException,
-    BadRequestOIException,
-    NotFoundOIException,
-    PermissionOIException,
-    RateLimitOIException,
-    ServerOIException,
-)
+from exceptions import openai as openai_exceptions
 from models.models import ImageContent, ImageContentItem, ImageUrl, TextContent
-from utils.enums import MessageTypeEnum
+from utils import constants, enums
 
 if TYPE_CHECKING:
     from aiogram.fsm.context import FSMContext
 
 
 class OpenAIClient:
-    max_history_length: int = 10
-    model: str = 'gpt-4o-mini'
+    max_history_length: int = constants.MAX_HISTORY_LENGTH
+    model: str = constants.GPT_MODEL
     semaphore: Semaphore
-    max_requests_to_api: int = 5
+    max_requests_to_api: int = constants.MAX_REQUESTS_TO_GPT_API
 
     def __init__(self, client: AsyncOpenAI) -> None:
         self.client = client
@@ -43,12 +36,13 @@ class OpenAIClient:
         self,
         voice_file_path: str,
     ) -> str | None:
-        with open(voice_file_path, 'rb') as f:
+        with open(voice_file_path, mode='rb') as voice_file:
             async with self.semaphore:
-                response = await self.client.audio.transcriptions.create(
-                    model='whisper-1',
-                    file=f,
-                    response_format='text',
+                response = await self.client.audio.transcriptions.create(  # type: ignore
+                    model=constants.GPT_AUDIO_MODEL,
+                    file=voice_file,
+                    response_format=enums.ResponseFormatEnum.TEXT,
+                    timeout=constants.TIMEOUT,
                 )
         os.remove(voice_file_path)
         return response
@@ -58,7 +52,7 @@ class OpenAIClient:
         state: 'FSMContext',
         user_text: str | None = None,
         image_url: str | None = None,
-        type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
+        type_message: enums.MessageTypeEnum = enums.MessageTypeEnum.TEXT,
     ) -> str | None:
         return await self._handle_openai_error(
             self._ask,
@@ -72,14 +66,14 @@ class OpenAIClient:
         self,
         user_text: str | None,
         image_url: str | None,
-        type_message: MessageTypeEnum,
+        type_message: enums.MessageTypeEnum,
         state: 'FSMContext',
     ) -> str | None:
         conversation_history = await state.get_data()
         conversation_history = conversation_history.get('history', [])
 
         user_content = self._make_content(
-            role='user',
+            role=enums.RoleEnum.USER,
             user_text=user_text,
             image_url=image_url,
             type_message=type_message,
@@ -94,10 +88,13 @@ class OpenAIClient:
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=conversation_history,
+                timeout=constants.TIMEOUT,
             )
 
         assistant_reply = response.choices[0].message.content
-        assistant_content = TextContent(role='assistant', content=assistant_reply)
+        assistant_content = TextContent(
+            role=enums.RoleEnum.ASSISTANT, content=assistant_reply
+        )
         conversation_history.append(assistant_content.model_dump())
 
         await state.update_data(history=conversation_history)
@@ -111,10 +108,10 @@ class OpenAIClient:
             response = await self.client.images.generate(
                 prompt=description,
                 n=1,
-                size='1024x1024',
-                model='dall-e-2',
-                quality='standard',
-                response_format='url',
+                size=constants.IMAGE_SIZE,  # type: ignore
+                model=constants.GPT_IMAGE_MODEL,
+                response_format=enums.ResponseFormatEnum.URL,  # type: ignore
+                timeout=constants.TIMEOUT,
             )
         return response.data[0].url
 
@@ -123,35 +120,43 @@ class OpenAIClient:
         try:
             return await func(*args, **kwargs)
         except openai.PermissionDeniedError as error:
-            raise PermissionOIException(error.message, error.status_code)
+            raise openai_exceptions.PermissionOIException(
+                error.message, error.status_code
+            )
         except openai.NotFoundError as error:
-            raise NotFoundOIException(error.message, error.status_code)
+            raise openai_exceptions.NotFoundOIException(error.message, error.status_code)
         except openai.BadRequestError as error:
-            raise BadRequestOIException(error.message, error.status_code)
+            raise openai_exceptions.BadRequestOIException(
+                error.message, error.status_code
+            )
         except openai.RateLimitError as error:
-            raise RateLimitOIException(error.message, error.status_code)
+            raise openai_exceptions.RateLimitOIException(error.message, error.status_code)
         except openai.InternalServerError as error:
-            raise ServerOIException(error.message, error.status_code)
+            raise openai_exceptions.ServerOIException(error.message, error.status_code)
         except openai.AuthenticationError as error:
-            raise AuthenticationOIException(error.message, error.status_code)
+            raise openai_exceptions.AuthenticationOIException(
+                error.message, error.status_code
+            )
+        except openai.APITimeoutError as error:
+            raise openai_exceptions.TimedOutOIException(error.message)
 
     @staticmethod
     def _make_content(
         role: str,
         user_text: str | None = None,
         image_url: str | None = None,
-        type_message: MessageTypeEnum = MessageTypeEnum.TEXT,
+        type_message: enums.MessageTypeEnum = enums.MessageTypeEnum.TEXT,
     ) -> TextContent | ImageContent:
         match type_message:
-            case MessageTypeEnum.TEXT:
+            case enums.MessageTypeEnum.TEXT:
                 return TextContent(role=role, content=user_text)
 
-            case MessageTypeEnum.IMAGE_URL:
+            case enums.MessageTypeEnum.IMAGE_URL:
                 return ImageContent(
                     role=role,
                     content=[
                         ImageContentItem(
-                            type=MessageTypeEnum.IMAGE_URL.value,
+                            type=enums.MessageTypeEnum.IMAGE_URL,
                             image_url=ImageUrl(url=image_url),
                         )
                     ],
