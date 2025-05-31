@@ -19,11 +19,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install ruff
-        run: pip install ruff
+      - name: Run installing ruff and check
+        uses: astral-sh/ruff-action@v3
+        with:
+          version-file: "./pyproject.toml"
+          args: "check --diff"
 
-      - name: Run ruff formatter
-        run: ruff format --check --diff --config pyproject.toml
-
-      - name: Run ruff linter without fix
-        run: ruff check --diff --config pyproject.toml
+      - name: Run format ruff
+        run: ruff format --check --diff
