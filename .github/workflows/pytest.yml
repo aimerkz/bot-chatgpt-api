@@ -26,7 +26,7 @@ jobs:
           activate-environment: true
 
       - name: Install pytest-md and pytest-emoji
-        run: uv add --dev pytest-md pytest-emoji && echo "$PWD/.venv/bin" >> $GITHUB_PATH
+        run: uv add --dev pytest-md pytest-emoji
 
       - name: Run tests
         uses: pavelzw/pytest-action@v2
