@@ -26,7 +26,7 @@ jobs:
           activate-environment: true
 
       - name: Install dependencies
-        run: uv sync --no-install-project && echo "$PWD/.venv/bin" >> $GITHUB_PATH
+        run: uv sync --no-install-project -n -q
 
       - name: Check
         uses: jakebailey/pyright-action@v2
