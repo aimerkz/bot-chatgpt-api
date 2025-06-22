@@ -80,14 +80,14 @@ def mock_openai(mocker, openai_client) -> OpenAIClient:
         openai_client,
         'ask',
         new_callable=AsyncMock,
-        return_value='mock_response',
+        return_value='response',
     )
 
     mocker.patch.object(
         openai_client,
         'convert_voice_to_text',
         new_callable=AsyncMock,
-        return_value='mock_response',
+        return_value='response',
     )
 
     return openai_client

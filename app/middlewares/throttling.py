@@ -19,7 +19,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         user_id: int = event.from_user.id
 
         if user_id in self.limit:
-            await event.answer('Слишком много сообщений 😓, попробуй через 1 сек')
+            await event.answer('Слишком много сообщений 😓\\, попробуй через 1 сек')
             return
 
         self.limit[user_id] = None

@@ -18,7 +18,7 @@ from utils.enums import MessageTypeEnum
 async def test_handle_ask_question(mock_message, mock_fsm):
     await handle_ask_question(mock_message, mock_fsm)
     mock_message.answer.assert_called_once_with(
-        text='Отлично! Напиши свой вопрос, и я отправлю его ChatGPT',
+        text='Отлично\\! Напиши свой вопрос\\, и я отправлю его ChatGPT',
         reply_markup=ReplyKeyboardRemove(),
     )
     mock_fsm.set_state.assert_called_once_with(DialogState.active)
@@ -65,8 +65,7 @@ async def test_handle_question_image_input(
 
     mock_message.text = None
     mock_message.photo = MagicMock()
-
-    mock_openai_client.ask.return_value = [MagicMock()]
+    mock_openai_client.ask.return_value = 'description of image'
 
     await handle_question_input(mock_message, mock_fsm, mock_openai_client)
 

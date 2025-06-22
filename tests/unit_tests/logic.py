@@ -1,7 +1,5 @@
 from unittest.mock import call
 
-from aiogram import html
-
 from keyboards.actions import get_exit_keyboard
 
 
@@ -9,9 +7,9 @@ def assert_common_calls(mock_message, mock_fsm, expected_response):
     mock_fsm.update_data.assert_called_once_with(last_response=expected_response)
 
     expected_calls = [
-        call(text='Отправил твой вопрос, ждем ответ ⌛'),
+        call(text='Отправил твой вопрос\\, ждем ответ ⌛'),
         call(
-            text=f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+            text='Можешь задать новый вопрос или нажать *Выйти*\\, чтобы завершить диалог',
             reply_markup=get_exit_keyboard(),
         ),
     ]

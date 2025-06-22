@@ -18,7 +18,7 @@ service_router = Router(name=__name__)
 )
 async def handle_maintenance_on(message: Message):
     await message.answer(
-        text='Выбери действие:',
+        text='Выбери действие\\:',
         reply_markup=get_admin_control_keyboard(),
     )
 
@@ -32,13 +32,13 @@ async def handle_activate_bot(message: Message, state: FSMContext):
 
     if current_state is None:
         await message.answer(
-            text='Бот уже активирован!',
+            text='Бот уже активирован\\!',
             reply_markup=get_initial_keyboard(message),
         )
     else:
         await state.clear()
         await message.answer(
-            text='Бот активирован!',
+            text='Бот активирован\\!',
             reply_markup=get_initial_keyboard(message),
         )
 
@@ -59,6 +59,6 @@ async def handle_maintenance_bot(message: Message, state: FSMContext):
 @service_router.message(StateFilter(BotManagementState.manage))
 async def handle_manage_mod(message: Message):
     await message.answer(
-        text='Бот находится на обслуживании, попробуй позже',
+        text='Бот находится на обслуживании\\, попробуй позже',
         reply_markup=get_initial_keyboard(message),
     )

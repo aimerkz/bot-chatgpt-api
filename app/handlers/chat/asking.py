@@ -1,4 +1,4 @@
-from aiogram import F, Router, flags, html
+from aiogram import F, Router, flags
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
@@ -9,6 +9,7 @@ from handlers.chat import logic
 from keyboards.actions import get_exit_keyboard
 from states.state import DialogState
 from utils.enums import ActionsEnum
+from utils.text_formatter import TelegramMarkdownV2Formatter
 
 asking_router = Router(name=__name__)
 
@@ -18,7 +19,7 @@ async def handle_ask_question(message: Message, state: FSMContext):
     """Обработчик события по кнопке 'Задать вопрос'"""
 
     await message.answer(
-        text='Отлично! Напиши свой вопрос, и я отправлю его ChatGPT',
+        text='Отлично\\! Напиши свой вопрос\\, и я отправлю его ChatGPT',
         reply_markup=ReplyKeyboardRemove(),
     )
     await state.set_state(DialogState.active)
@@ -47,7 +48,7 @@ async def handle_question_input(
 ):
     """Обработчик события получения нового вопроса"""
 
-    await message.answer(text='Отправил твой вопрос, ждем ответ ⌛')
+    await message.answer(text='Отправил твой вопрос\\, ждем ответ ⌛')
 
     if message.text:
         answer = await logic.process_text_message(message, openai_client, state)
@@ -56,10 +57,12 @@ async def handle_question_input(
     else:
         answer = await logic.process_voice_message(message, openai_client, state)
 
-    await state.update_data(last_response=answer)
-    await message.reply(text=answer)
+    formatted_answer = TelegramMarkdownV2Formatter.format_answer_simple(answer)
+
+    await state.update_data(last_response=formatted_answer)
+    await message.reply(text=formatted_answer)
 
     await message.answer(
-        text=f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+        text='Можешь задать новый вопрос или нажать *Выйти*\\, чтобы завершить диалог',
         reply_markup=get_exit_keyboard(),
     )

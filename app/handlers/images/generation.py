@@ -27,7 +27,7 @@ async def handle_image_prompt(
     image_count = data.pop('image_count', 1)
 
     await message.answer(
-        text='Пришлю, как будет готово',
+        text='Пришлю\\, как будет готово',
         reply_markup=ReplyKeyboardRemove(),
     )
 

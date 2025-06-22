@@ -13,7 +13,7 @@ class BotInstanceContainer(containers.DeclarativeContainer):
         Bot,
         token=settings.bot_token.get_secret_value(),
         default=DefaultBotProperties(
-            parse_mode=ParseMode.HTML,
+            parse_mode=ParseMode.MARKDOWN_V2,
             link_preview=LinkPreviewOptions(
                 is_disabled=False,
                 prefer_small_media=True,

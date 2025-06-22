@@ -15,7 +15,7 @@ from states.state import BotManagementState
 async def test_handle_maintenance_on(mock_message_for_admin):
     await handle_maintenance_on(mock_message_for_admin)
     mock_message_for_admin.answer.assert_called_once_with(
-        text='Выбери действие:',
+        text='Выбери действие\\:',
         reply_markup=get_admin_control_keyboard(),
     )
 
@@ -24,7 +24,7 @@ async def test_handle_maintenance_on(mock_message_for_admin):
 async def test_handle_manage_mod(mock_message):
     await handle_manage_mod(mock_message)
     mock_message.answer.assert_called_once_with(
-        text='Бот находится на обслуживании, попробуй позже',
+        text='Бот находится на обслуживании\\, попробуй позже',
         reply_markup=get_initial_keyboard(mock_message),
     )
 
@@ -34,7 +34,7 @@ async def test_handle_activate_bot_already_active(mock_message_for_admin, mock_f
     mock_fsm.get_state.return_value = None
     await handle_activate_bot(mock_message_for_admin, mock_fsm)
     mock_message_for_admin.answer.assert_called_once_with(
-        text='Бот уже активирован!',
+        text='Бот уже активирован\\!',
         reply_markup=get_initial_keyboard(mock_message_for_admin),
     )
 
@@ -45,7 +45,7 @@ async def test_handle_activate_bot(mock_message_for_admin, mock_fsm):
     await handle_activate_bot(mock_message_for_admin, mock_fsm)
     mock_fsm.clear.assert_called_once()
     mock_message_for_admin.answer.assert_called_once_with(
-        text='Бот активирован!',
+        text='Бот активирован\\!',
         reply_markup=get_initial_keyboard(mock_message_for_admin),
     )
 

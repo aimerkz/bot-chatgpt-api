@@ -1,5 +1,4 @@
 import pytest
-from aiogram import html
 from aiogram.types import LinkPreviewOptions
 
 from handlers.commands.commands import handle_cmd_help, handle_cmd_start
@@ -16,7 +15,7 @@ async def test_handle_cmd_start(mock_message):
     assert len(buttons) == 3
 
     mock_message.answer.assert_called_once_with(
-        text=f'Привет 🤝, {html.bold(mock_message.from_user.full_name)}! Пожалуйста, выбери действие:',
+        text=f'Привет 🤝\\, *{mock_message.from_user.full_name}*\\! Пожалуйста\\, выбери действие\\:',
         reply_markup=get_initial_keyboard(mock_message),
     )
 
@@ -30,7 +29,7 @@ async def test_handle_cmd_start_for_admin(mock_message_for_admin):
     assert len(buttons) == 4
 
     mock_message_for_admin.answer.assert_called_once_with(
-        text=f'Привет 🤝, {html.bold(mock_message_for_admin.from_user.full_name)}! Пожалуйста, выбери действие:',
+        text=f'Привет 🤝\\, *{mock_message_for_admin.from_user.full_name}*\\! Пожалуйста\\, выбери действие\\:',
         reply_markup=get_initial_keyboard(mock_message_for_admin),
     )
 
