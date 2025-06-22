@@ -1,5 +1,4 @@
 import pytest
-from aiogram import html
 from aiogram.types import ReplyKeyboardRemove
 
 from states.state import DialogState
@@ -19,12 +18,14 @@ async def test_handle_ask_question(
 ):
     message = base_message_factory(ActionsEnum.ASK)
     update = update_factory(message)
-    sent_message_factory(message, 'Отлично! Напиши свой вопрос, и я отправлю его ChatGPT')
+    sent_message_factory(
+        message, 'Отлично\\! Напиши свой вопрос\\, и я отправлю его ChatGPT'
+    )
 
     await dispatcher.feed_update(bot, update)
     request = bot.get_request()
 
-    assert request.text == 'Отлично! Напиши свой вопрос, и я отправлю его ChatGPT'
+    assert request.text == 'Отлично\\! Напиши свой вопрос\\, и я отправлю его ChatGPT'
     assert request.chat_id == message.chat.id
     assert isinstance(request.reply_markup, ReplyKeyboardRemove)
     await check_state(fsm_context_factory, message, DialogState.active)
@@ -68,9 +69,9 @@ async def test_handle_question_text_input(
 
     fsm = await set_state(fsm_context_factory, message, DialogState.active)
     expected_responses = [
-        'Отправил твой вопрос, ждем ответ ⌛',
+        'Отправил твой вопрос\\, ждем ответ ⌛',
         mock_openai.ask.return_value,
-        f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+        'Можешь задать новый вопрос или нажать *Выйти*\\, чтобы завершить диалог',
     ]
 
     sent_message_factory(message, *expected_responses)
@@ -95,9 +96,9 @@ async def test_handle_question_image_input(
 
     fsm = await set_state(fsm_context_factory, message, DialogState.active)
     expected_responses = [
-        'Отправил твой вопрос, ждем ответ ⌛',
+        'Отправил твой вопрос\\, ждем ответ ⌛',
         mock_openai.ask.return_value,
-        f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+        'Можешь задать новый вопрос или нажать *Выйти*\\, чтобы завершить диалог',
     ]
 
     sent_message_factory(message, *expected_responses)
@@ -122,9 +123,9 @@ async def test_handle_question_voice_input(
 
     fsm = await set_state(fsm_context_factory, message, DialogState.active)
     expected_responses = [
-        'Отправил твой вопрос, ждем ответ ⌛',
+        'Отправил твой вопрос\\, ждем ответ ⌛',
         mock_openai.ask.return_value,
-        f'Можешь задать новый вопрос или нажать {html.bold("Выйти")}, чтобы завершить диалог',
+        'Можешь задать новый вопрос или нажать *Выйти*\\, чтобы завершить диалог',
     ]
 
     sent_message_factory(message, *expected_responses)
@@ -147,13 +148,13 @@ async def test_handle_question_incorrect_input(
     await set_state(fsm_context_factory, incorrect_message, DialogState.active)
 
     sent_message_factory(
-        incorrect_message, 'Отправь текст, картинку или голосовое сообщение 😠'
+        incorrect_message, 'Отправь текст\\, картинку или голосовое сообщение 😠'
     )
     await dispatcher.feed_update(bot, update)
 
     requests = bot.get_requests()
     assert len(requests) == 1
-    assert requests[0].text == 'Отправь текст, картинку или голосовое сообщение 😠'
+    assert requests[0].text == 'Отправь текст\\, картинку или голосовое сообщение 😠'
     assert requests[0].reply_markup is None
     assert requests[0].chat_id == incorrect_message.chat.id
     mock_openai.ask.assert_not_awaited()

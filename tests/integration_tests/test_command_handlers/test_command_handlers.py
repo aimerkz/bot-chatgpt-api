@@ -14,7 +14,7 @@ async def test_handle_cmd_start(
     update = update_factory(message)
     sent_message_factory(
         message,
-        f'Привет 🤝, <b>{message.from_user.full_name}</b>! Пожалуйста, выбери действие:',
+        f'Привет 🤝\\, *{message.from_user.full_name}*\\! Пожалуйста\\, выбери действие\\:',
     )
 
     await dispatcher.feed_update(bot, update)
@@ -22,7 +22,7 @@ async def test_handle_cmd_start(
 
     assert (
         request.text
-        == f'Привет 🤝, <b>{message.from_user.full_name}</b>! Пожалуйста, выбери действие:'
+        == f'Привет 🤝\\, *{message.from_user.full_name}*\\! Пожалуйста\\, выбери действие\\:'
     )
     assert request.chat_id == message.chat.id
     assert len(request.reply_markup.keyboard[0]) >= 3
