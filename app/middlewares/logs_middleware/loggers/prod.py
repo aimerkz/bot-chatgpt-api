@@ -2,7 +2,7 @@ import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
 
-from middlewares.logs_middleware.loggers.base import BaseLogger
+from middlewares.logs_middleware.loggers.interface import BaseLogger
 
 
 class ProdLogger(BaseLogger):

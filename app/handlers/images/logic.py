@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 from aiogram.types import InputMediaPhoto
 
-from keyboards.actions import get_initial_keyboard
 from utils.images import generate_images
 
 if TYPE_CHECKING:
@@ -27,9 +26,4 @@ async def send_generated_image(
         chat_id=message.from_user.id,
         media=media_group,
     )
-
-    await state.clear()
-    await message.answer(
-        text='Что делаем дальше?',
-        reply_markup=get_initial_keyboard(message),
-    )
+    await state.update_data(generation_complete=True)

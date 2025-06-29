@@ -5,7 +5,7 @@ from middlewares.logs_middleware.loggers.prod import ProdLogger
 from utils.enums import BotEnvEnum
 
 if TYPE_CHECKING:
-    from middlewares.logs_middleware.loggers.base import BaseLogger
+    from middlewares.logs_middleware.loggers.interface import BaseLogger
 
 
 class LoggerFactory:
