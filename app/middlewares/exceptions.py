@@ -38,16 +38,16 @@ class OpenAIExceptionMiddleware(BaseMiddleware):
         exception: Exception,
     ):
         error_messages = {
-            openai_exceptions.PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия. Проверь ключик API',
+            openai_exceptions.PermissionOIException: '🚫 У тебя нет прав для выполнения этого действия\\. Проверь ключик API',
             openai_exceptions.NotFoundOIException: '⚠️ Проверь ссылку на API ChatGTP',
             openai_exceptions.BadRequestOIException: '❌ Проверь запрос к API ChatGPT',
             openai_exceptions.RateLimitOIException: '😱 Слишком много запросов к ChatGPT',
-            openai_exceptions.ServerOIException: '😞 У ChatGPT какие-то проблемы, попробуй позже',
-            openai_exceptions.AuthenticationOIException: 'Не получилось авторизоваться :(',
-            openai_exceptions.TimedOutOIException: 'Превышено время ожидания ответа от ChatGPT :(',
+            openai_exceptions.ServerOIException: '😞 У ChatGPT какие-то проблемы\\, попробуй позже',
+            openai_exceptions.AuthenticationOIException: 'Не получилось авторизоваться \\:\\(',
+            openai_exceptions.TimedOutOIException: 'Превышено время ожидания ответа от ChatGPT \\:\\(',
         }
 
-        error_message = error_messages.get(type(exception), '💔 Что-то пошло не так(')  # type: ignore
+        error_message = error_messages.get(type(exception), '💔 Что\\-то пошло не так\\(')  # type: ignore
         await event.answer(error_message)
         await self.return_to_main_menu(event, state)
 

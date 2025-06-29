@@ -1,10 +1,10 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from aiogram.types import ReplyKeyboardRemove
 
 from handlers.images.base import handle_generate_image, handle_image_count
 from handlers.images.generation import handle_image_prompt
+from keyboards.actions import get_initial_keyboard
 from states.state import ImageState
 
 
@@ -43,7 +43,7 @@ async def test_handle_image_prompt(
     await handle_image_prompt(mock_message, mock_fsm, mock_openai_client)
     mock_message.answer.assert_called_once_with(
         text='Пришлю\\, как будет готово',
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=get_initial_keyboard(mock_message),
     )
     mock_send_generated_image.assert_called_once_with(
         mock_message,

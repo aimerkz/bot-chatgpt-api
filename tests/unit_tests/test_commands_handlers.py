@@ -7,8 +7,8 @@ from utils.constants import help_text
 
 
 @pytest.mark.asyncio
-async def test_handle_cmd_start(mock_message):
-    await handle_cmd_start(mock_message)
+async def test_handle_cmd_start(mock_message, mock_fsm):
+    await handle_cmd_start(mock_message, mock_fsm)
 
     keyboard = get_initial_keyboard(mock_message)
     buttons = [button for row in keyboard.keyboard for button in row]
@@ -21,8 +21,8 @@ async def test_handle_cmd_start(mock_message):
 
 
 @pytest.mark.asyncio
-async def test_handle_cmd_start_for_admin(mock_message_for_admin):
-    await handle_cmd_start(mock_message_for_admin)
+async def test_handle_cmd_start_for_admin(mock_message_for_admin, mock_fsm):
+    await handle_cmd_start(mock_message_for_admin, mock_fsm)
 
     keyboard = get_initial_keyboard(mock_message_for_admin)
     buttons = [button for row in keyboard.keyboard for button in row]

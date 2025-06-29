@@ -1,7 +1,7 @@
 import logging
 
 from middlewares.logs_middleware.filters import ColorFilter
-from middlewares.logs_middleware.loggers.base import BaseLogger
+from middlewares.logs_middleware.loggers.interface import BaseLogger
 
 
 class DevLogger(BaseLogger):

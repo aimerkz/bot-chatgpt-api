@@ -5,7 +5,7 @@ from aiogram import BaseMiddleware
 from utils.types import T
 
 if TYPE_CHECKING:
-    from middlewares.logs_middleware.loggers.base import BaseLogger
+    from middlewares.logs_middleware.loggers.interface import BaseLogger
 
 
 class LoggingMiddleware(BaseMiddleware):

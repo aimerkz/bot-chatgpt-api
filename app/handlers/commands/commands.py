@@ -1,5 +1,6 @@
 from aiogram import Router
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.types import LinkPreviewOptions, Message
 
 from keyboards.actions import get_initial_keyboard
@@ -9,9 +10,10 @@ commands_router = Router(name=__name__)
 
 
 @commands_router.message(Command('start'))
-async def handle_cmd_start(message: Message):
+async def handle_cmd_start(message: Message, state: FSMContext):
     """Обработчик события команды /start"""
 
+    await state.clear()
     await message.answer(
         text=f'Привет 🤝\\, *{message.from_user.full_name}*\\! Пожалуйста\\, выбери действие\\:',
         reply_markup=get_initial_keyboard(message),
