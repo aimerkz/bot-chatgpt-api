@@ -13,7 +13,7 @@ async def test_handle_generate_image(mock_message, mock_fsm):
     await handle_generate_image(mock_message, mock_fsm)
     mock_fsm.clear.assert_called_once()
     mock_message.answer.assert_called_once_with(
-        text='Сколько картинок хочешь сгенерировать\\? (Число от 1 до 3)',
+        text='Сколько картинок хочешь сгенерировать\\? \\(Число от 1 до 3\\)',
     )
     mock_fsm.set_state.assert_called_once_with(ImageState.count_images)
 

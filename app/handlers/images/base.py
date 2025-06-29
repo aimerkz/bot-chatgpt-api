@@ -15,7 +15,7 @@ async def handle_generate_image(message: Message, state: FSMContext):
 
     await state.clear()
     await message.answer(
-        text='Сколько картинок хочешь сгенерировать\\? (Число от 1 до 3)',
+        text='Сколько картинок хочешь сгенерировать\\? \\(Число от 1 до 3\\)',
     )
     await state.set_state(ImageState.count_images)
 
