@@ -25,7 +25,7 @@ jobs:
             cd /home/bot
 
             if [ ! -d "bot-chatgpt-api/.git" ]; then
-              git clone https://github.com/aimerkz/bot-chatgpt-api.git
+              git clone https://github.com/aimerkz/bot-chatgpt-api.git && cd bot-chatgpt-api/
             else
               cd bot-chatgpt-api/ && sudo git pull origin master
             fi
