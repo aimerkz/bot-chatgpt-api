@@ -25,13 +25,13 @@ jobs:
             cd /home/bot
 
             if [ ! -d "bot-chatgpt-api/.git" ]; then
-              sudo git clone https://github.com/aimerkz/bot-chatgpt-api.git
+              git clone https://github.com/aimerkz/bot-chatgpt-api.git
             else
-              sudo cd bot-chatgpt-api/ && sudo git pull origin master
+              cd bot-chatgpt-api/ && sudo git pull origin master
             fi
             
             if [ -f ./.env ]; then
-              sudo rm ./.env
+              rm ./.env
             fi
             
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> ./.env
